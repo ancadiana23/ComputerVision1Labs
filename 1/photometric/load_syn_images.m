@@ -16,13 +16,10 @@ end
 image_stack = 0;
 V = 0;
 Z = 0.5;
-
 for i = 1:nfiles
-
     % read input image
     im = imread(fullfile(image_dir, files(i).name));
     im = im(:, :, channel);
-    
     % stack at third dimension
     if image_stack == 0
         [h, w] = size(im);
