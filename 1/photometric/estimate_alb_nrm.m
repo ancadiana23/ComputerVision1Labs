@@ -37,12 +37,9 @@ for y = 1:h
     IV = scriptI * scriptV;
     Ii = scriptI * i;
     % Use shadow trick
-    [g, r] = linsolve(IV, Ii);
-    %[g, r] = linsolve(scriptV, i);
+    %[g, r] = linsolve(IV, Ii);
+    [g, r] = linsolve(scriptV, i);
     % r should be == 3
-    if r < 3
-        % Error in solving the system; should be handled.
-    end
     norm_g = norm(g);
     rs(y, x) = r;
     % should alwayds be in [0, 1]
@@ -50,15 +47,6 @@ for y = 1:h
     normal(y, x, :) = g / norm_g;
   end
 end
-%{
-sum(sum(rs < 3))
-"Rs == 3"
-max(albedo(rs == 3.0))
-min(albedo(rs == 3.0))
-"Rs < 3"
-max(albedo(rs < 3.0))
-min(albedo(rs < 3.0))
-%}
 % =========================================================================
 
 end

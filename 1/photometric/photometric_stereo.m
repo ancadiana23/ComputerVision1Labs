@@ -28,14 +28,8 @@ SE(SE <= threshold) = NaN; % for good visualization
 fprintf('Number of outliers: %d\n\n', sum(sum(SE > threshold)));
 
 %% compute the surface height
-sum(sum(p))
-sum(sum(q))
 height_map = construct_surface( p, q);
-size(height_map)
-sum(sum(height_map))
-min(min(height_map))
-max(max(height_map))
-surf(height_map);
+
 [x_end, y_end, ~] = size(height_map);
 x = 1:16:x_end;
 y = 1:16:y_end;
@@ -46,7 +40,7 @@ quiver3(x, y, height_map(1:16:end, 1:16:end), normals(1:16:end,1:16:end,1), norm
 show_results(albedo, normals, SE);
 show_model(albedo, height_map);
 
-%{
+
 %% Face
 [image_stack, scriptV] = load_face_images('./photometrics_images/yaleB02/');
 [h, w, n] = size(image_stack);
@@ -67,4 +61,4 @@ height_map = construct_surface( p, q );
 
 show_results(albedo, normals, SE);
 show_model(albedo, height_map);
-%}
+
