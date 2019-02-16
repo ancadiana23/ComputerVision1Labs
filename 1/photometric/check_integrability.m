@@ -5,14 +5,13 @@ function [ p, q, SE ] = check_integrability( normals )
 %   q : df / dy
 %   SE : Squared Errors of the 2 second derivatives
 % initalization
-size_derivatives = size(normals);
-size_derivatives = size_derivatives(1:2);
+[h, w, ~] = size(normals);
 
-p = zeros(size_derivatives);
-q = zeros(size_derivatives);
-dp = zeros(size_derivatives);
-dq = zeros(size_derivatives);
-SE = zeros(size_derivatives);
+p = zeros(h, w);
+q = zeros(h, w);
+dp = zeros(h, w);
+dq = zeros(h, w);
+SE = zeros(h, w);
 
 % ========================================================================
 % YOUR CODE GOES HERE

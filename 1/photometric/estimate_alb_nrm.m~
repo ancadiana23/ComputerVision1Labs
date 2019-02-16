@@ -39,18 +39,21 @@ for y = 1:h
     % Use shadow trick
     [g, r] = linsolve(IV, Ii);
     %[g, r] = linsolve(scriptV, i);
-    % r should be == 3
-    if r < 3
-        % Error in solving the system; should be handled.
-    end
     norm_g = norm(g);
     rs(y, x) = r;
-    % should alwayds be in [0, 1]
+    
+    if norm_g == 0
+      continue
+    end
     albedo(y, x) = norm_g;
-    normal(y, x, :) = g / norm_g;
+    if norm_g == 0
+        %"!!!!!"
+        normal(y, x, :) = g;
+    else
+        normal(y, x, :) = g / norm_g;
+    end
   end
 end
-%{
 sum(sum(rs < 3))
 "Rs == 3"
 max(albedo(rs == 3.0))
@@ -58,7 +61,7 @@ min(albedo(rs == 3.0))
 "Rs < 3"
 max(albedo(rs < 3.0))
 min(albedo(rs < 3.0))
-%}
+
 % =========================================================================
 
 end
