@@ -32,10 +32,9 @@ q(isnan(q)) = 0;
 % YOUR CODE GOES HERE
 % approximate second derivate by neighbor difference
 % and compute the Squared Errors SE of the 2 second derivatives SE
-dp(:, 1) = p(:, 1);
-dp(:, 2:end) = p(:, 2:end) - p(:,1:end-1);
-dq(1, :) = q(1, :);
-dq(2:end, :) = q(2:end, :) - q(1:end-1, :);
+dp(1:end-1, :) = p(2:end, :) - p(1:end-1, :);
+
+dq(: ,1:end-1) = q(:, 2:end) - q(:, 1:end-1);
 
 dp(isnan(dp)) = 0;
 dq(isnan(dq)) = 0;

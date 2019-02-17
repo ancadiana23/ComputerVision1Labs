@@ -36,9 +36,11 @@ for y = 1:h
     scriptI = diag(i);
     IV = scriptI * scriptV;
     Ii = scriptI * i;
-    % Use shadow trick
-    %[g, r] = linsolve(IV, Ii);
-    [g, r] = linsolve(scriptV, i);
+    if shadow_trick
+        [g, r] = linsolve(IV, Ii);
+    else
+        [g, r] = linsolve(scriptV, i);
+    end
     % r should be == 3
     norm_g = norm(g);
     rs(y, x) = r;
