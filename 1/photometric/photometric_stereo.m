@@ -28,7 +28,7 @@ SE(SE <= threshold) = NaN; % for good visualization
 fprintf('Number of outliers: %d\n\n', sum(sum(SE > threshold)));
 
 %% compute the surface height
-height_map = construct_surface( p, q);
+height_map = construct_surface( p, q, "average");
 
 [x_end, y_end, ~] = size(height_map);
 x = 1:16:x_end;
@@ -57,7 +57,12 @@ SE(SE <= threshold) = NaN; % for good visualization
 fprintf('Number of outliers: %d\n\n', sum(sum(SE > threshold)));
 
 %% compute the surface height
-height_map = construct_surface( p, q );
+height_map = construct_surface( p, q, "average");
+
+[x_end, y_end, ~] = size(height_map);
+x = 1:16:x_end;
+y = 1:16:y_end;
+quiver3(x, y, height_map(1:16:end, 1:16:end), normals(1:16:end,1:16:end,1), normals(1:16:end,1:16:end,2), normals(1:16:end,1:16:end,3))
 
 show_results(albedo, normals, SE);
 show_model(albedo, height_map);

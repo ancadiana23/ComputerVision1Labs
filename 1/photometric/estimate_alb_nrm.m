@@ -42,7 +42,7 @@ for y = 1:h
     % r should be == 3
     norm_g = norm(g);
     rs(y, x) = r;
-    % should alwayds be in [0, 1]
+    % should alwayds be in (0, 1]
     albedo(y, x) = norm_g;
     normal(y, x, :) = g / norm_g;
   end
