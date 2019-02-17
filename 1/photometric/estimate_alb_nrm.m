@@ -16,19 +16,15 @@ end
 % create arrays for
 %   albedo (1 channel)
 %   normal (3 channels)
-rs = zeros(h, w);
 albedo = zeros(h, w);
 normal = zeros(h, w, 3);
 
-% =========================================================================
-% YOUR CODE GOES HERE
 % for each point in the image array
 %   stack image values into a vector i
 %   construct the diagonal matrix scriptI
 %   solve scriptI * scriptV * g = scriptI * i to obtain g for this point
 %   albedo at this point is |g|
 %   normal at this point is g / |g|
-
 for y = 1:h
   for x = 1:w 
     i = image_stack(y, x, :);
@@ -37,19 +33,17 @@ for y = 1:h
     IV = scriptI * scriptV;
     Ii = scriptI * i;
     if shadow_trick
-        [g, r] = linsolve(IV, Ii);
+        [g, ~] = linsolve(IV, Ii);
     else
-        [g, r] = linsolve(scriptV, i);
+        [g, ~] = linsolve(scriptV, i);
     end
     % r should be == 3
     norm_g = norm(g);
-    rs(y, x) = r;
     % should alwayds be in (0, 1]
     albedo(y, x) = norm_g;
     normal(y, x, :) = g / norm_g;
   end
 end
-% =========================================================================
 
 end
 
