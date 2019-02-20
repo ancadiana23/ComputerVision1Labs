@@ -1,0 +1,10 @@
+input_image = imread('/MATLAB Drive/CV1_A1/1/color_constancy/awb.jpg');R = input_image(:,:,1);
+G = input_image(:,:,2);
+B = input_image(:,:,3);
+r=mean(R(:));
+g=mean(G(:));
+b=mean(B(:));
+output_image = cat(3,R*(128/r),G*(128/g),B*(128/b));subplot(1,2,1);
+imshow(input_image),title('Original Image');
+subplot(1,2,2);
+imshow(output_image),title('Result of Grey World Algorithm');
