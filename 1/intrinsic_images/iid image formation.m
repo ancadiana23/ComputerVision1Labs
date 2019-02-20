@@ -10,7 +10,7 @@ original = imread('ball.png');
 shading = double(shading)./255;
 
 % Recover original image by element-wise multiplication
-reconstruction = uint8(double(im_albedo).*im_shading);
+reconstruction = uint8(double(albedo).*shading);
 
 % Plot images in one subplot
 subplot(2,2,1)
