@@ -1,10 +1,10 @@
-X = [2 3 1 9]% test gauss1D and gauss2D
+% test gauss1D and gauss2D
 I = imread('./images/image1.jpg');
 
 % computational complexity of convolutions:
 % n = kernel_size; m = image_size
-% 1D: O(2 x n x m x m)
-% 2D: O(n x n x m x m)
+% 1D: O(2 x n x m x m
+% 2D: On x n x m x m
 F1d = gauss1D(2, 5);
 F2d = gauss2D(2, 5);
 
