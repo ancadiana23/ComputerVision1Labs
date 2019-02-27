@@ -1,0 +1,20 @@
+function imOut = compute_LoG(image, LOG_type)
+
+switch LOG_type
+    case 1
+        %method 1
+        smooth_im = imfilter(image, gauss2D(0.5 , 5));
+        imOut = imfilter(smooth_im, fspecial('laplacian', hsize=[5, 5]));
+
+    case 2
+        %method 2
+        imOut = imfilter(image, fspecial('log'[5, 5], sigma=0.5));
+
+
+    case 3
+        %method 3
+        fprintf('Not implemented\n')
+
+end
+end
+
