@@ -1,7 +1,7 @@
 %% Hyperparameters
 k        = 2;      % number of clusters in k-means algorithm. By default, 
                    % we consider k to be 2 in foreground-background segmentation task.
-image_id = 'Kobi'; % Identifier to switch between input images.
+image_id = 'Robin-1'; % Identifier to switch between input images.
                    % Possible ids: 'Kobi',    'Polar', 'Robin-1'
                    %               'Robin-2', 'Cows'
 
@@ -74,6 +74,9 @@ orientations = 0:dTheta:(pi/2);
 % the standard deviation, or the spread of the Gaussian. 
 sigmas = [1,2]; 
 
+%psi    = 3;
+%gamma = 0.5;
+
 % Now you can create the filterbank. We provide you with a MATLAB struct
 % called gaborFilterBank in which we will hold the filters and their
 % corresponding parameters such as sigma, lambda and etc. 
@@ -89,7 +92,7 @@ for ii = 1:length(lambdas)
             lambda = lambdas(ii);
             sigma  = sigmas(jj);            
             theta  = orientations(ll);
-            psi    = 0;
+            psi    = 3;
             gamma  = 0.5;
             
             % Create a Gabor filter with the specs above. 
@@ -190,8 +193,8 @@ if smoothingFlag
         % ii) insert the smoothed image into features(:,:,jj)
     %END_FOR
     for jj = 1:length(featureMags)
-        kernel = gaborFilterBank(jj).sigma;
-        features(:,:,jj) = imgaussfilt(featureMags{jj}, 5*kernel);  
+        sig = gaborFilterBank(jj).sigma;
+        features(:,:,jj) = imgaussfilt(featureMags{jj}, 5*sig);  
     end
 else
     % Don't smooth but just insert magnitude images into the matrix
@@ -232,6 +235,7 @@ imshow(feature2DImage,[]), title('Pixel representation projected onto first PC')
 % \\ Hint-2: use the parameter k defined in the first section when calling
 %            MATLAB's built-in kmeans function.
 tic
+rng(42)
 pixLabels = kmeans(features, k); % k is determined in beginning
 ctime = toc;
 fprintf('Clustering completed in %.3f seconds.\n', ctime);
