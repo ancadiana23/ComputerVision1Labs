@@ -189,7 +189,10 @@ if smoothingFlag
         % i)  filter the magnitude response with appropriate Gaussian kernels
         % ii) insert the smoothed image into features(:,:,jj)
     %END_FOR
-    for 
+    for jj = 1:length(featureMags)
+        kernel = gaborFilterBank(jj).sigma;
+        features(:,:,jj) = imgaussfilt(featureMags{jj}, 5*kernel);  
+    end
 else
     % Don't smooth but just insert magnitude images into the matrix
     % called features.
@@ -210,8 +213,8 @@ features = reshape(features, numRows * numCols, []);
 % \\ Hint: see http://ufldl.stanford.edu/wiki/index.php/Data_Preprocessing
 %          for more information. \\
 
-features = % \\ TODO: i)  Implement standardization on matrix called features. 
-           %          ii) Return the standardized data matrix.
+features = features - mean(features, 2); % normalize by subtracting mean
+features = features ./ std(features, 0, 2); % standardize by dividing over standard deviation
 
 
 % (Optional) Visualize the saliency map using the first principal component 
@@ -229,7 +232,7 @@ imshow(feature2DImage,[]), title('Pixel representation projected onto first PC')
 % \\ Hint-2: use the parameter k defined in the first section when calling
 %            MATLAB's built-in kmeans function.
 tic
-pixLabels = % \\TODO: Return cluster labels per pixel
+pixLabels = kmeans(features, k); % k is determined in beginning
 ctime = toc;
 fprintf('Clustering completed in %.3f seconds.\n', ctime);
 
