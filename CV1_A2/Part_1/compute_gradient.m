@@ -6,7 +6,7 @@ Gx = double(imfilter(image, sobel_x));
 Gy = double(imfilter(image, sobel_y));
 
 im_magnitude = sqrt((Gx.^2 + Gy.^2));
-im_direction = atan(Gy./Gx);
+im_direction = atand(Gy./Gx);
 
 %{
 % version that gives identical results to imgradient

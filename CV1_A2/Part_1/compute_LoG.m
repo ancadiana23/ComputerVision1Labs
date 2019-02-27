@@ -10,7 +10,6 @@ switch LOG_type
         %method 2
         imOut = imfilter(image, fspecial('log', [5, 5], 0.5));
 
-
     case 3
         %method 3
         im_gauss_1 = imfilter(image, gauss2D(0.5 , 5));

@@ -16,7 +16,8 @@ I2 = conv2(F2d, I);
 
 % should be zero
 sum(sum(abs(I1 - I2) > 0.001))
-
+%}
+%{
 %-----------------------------------------------------------
 % test gradient 
 [Gx, Gy, G, theta] = compute_gradient(I);
@@ -25,9 +26,11 @@ figure(1), imshow(G), title("Magnitute");
 figure(2), imshow(Gx), title("Gx");
 figure(3), imshow(Gy), title("Gy");
 figure(4), imshow(theta), title("direction");
+sum(sum(Gy ~= theta))
+hist(theta(:))
 
 
-%{
+
 % compare results with imgradient
 [G_b, theta_b] = imgradient(I, 'sobel');
 [Gx_b,Gy_b] = imgradientxy(I, 'sobel');
@@ -58,18 +61,17 @@ figure(10), imshow(theta_b);
 figure(11), hist(theta(:))
 figure(12), hist(theta_b(:))
 %}
-%}
+
+
 %------------------------------------------------------
 % test Laplacian 
 for i=1:3
     str = sprintf("Second order derivative filter - method %d", i);
     fprintf(str + "\n");
     imOut = compute_LoG(I, i);
-    max_val = max(max(imOut));
-    imOut = imOut * (255.0 / max_val);
+    imOut = mat2gray(imOut);
     figure(i*2), imshow(imOut), title(str);
     figure(i*2+1), hist(double(imOut(:))), title(str);
-    
-    
+    imwrite(imOut, "second_order_derivative_method" + i + ".jpg");
     drawnow();
 end
