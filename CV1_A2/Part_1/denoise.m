@@ -2,10 +2,14 @@ function [ imOut ] = denoise( image, kernel_type, varargin)
 
 switch kernel_type
     case 'box'
-        fprintf('Not implemented\n')
+        % built in function imboxfilt for boxfiltering
+        imOut = imboxfilt(image, varargin{1});
     case 'median'
-        fprintf('Not implemented\n')
+        % built in function medfilt2 for medianfiltering
+        imOut = medfilt2(image, varargin{1});
     case 'gaussian'
-        fprintf('Not implemented\n')
+        % using gauss2d
+        h = gauss2D(varargin{1}, varargin{2});
+        imOut = imfilter(image, h);
 end
 end
