@@ -72,7 +72,7 @@ orientations = 0:dTheta:(pi/2);
 
 % Define the set of sigmas for the Gaussian envelope. Sigma here defines 
 % the standard deviation, or the spread of the Gaussian. 
-sigmas = [1,2]; 
+sigmas = [1,4]; 
 
 %psi    = 3;
 %gamma = 0.5;
@@ -194,7 +194,7 @@ if smoothingFlag
     %END_FOR
     for jj = 1:length(featureMags)
         sig = gaborFilterBank(jj).sigma;
-        features(:,:,jj) = imgaussfilt(featureMags{jj}, 5*sig);  
+        features(:,:,jj) = imgaussfilt(featureMags{jj}, 4*sig);  
     end
 else
     % Don't smooth but just insert magnitude images into the matrix
