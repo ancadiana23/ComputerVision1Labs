@@ -1,0 +1,13 @@
+image = imread('./pingpong/0000.jpeg');
+[H, r, c] = harris_corner_detector(image);
+
+imshow(your_image);
+hold on
+t=0:0.1:2*pi;
+for y = r
+    for x 
+%x_o and y_o = center of circle
+x = x_o + radio*sin(t);
+y = y_o + radio*cos(t);
+plot(x,y,'r');
+hold off
