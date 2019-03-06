@@ -6,7 +6,7 @@ I = rgb2gray(image);
 I = double(I);
 I = imgaussfilt(I, sigma);
 
-gauss_kernel = fspecial('gaussian', [9, 9], 1.5);
+gauss_kernel = fspecial('gaussian', [11, 11], 3);
 [Gx,Gy] = gradient(gauss_kernel);
 
 %Gy = [1 0 -1; 2 0 -2; 1 0 -1];
@@ -32,7 +32,7 @@ H = H ./ max(max(H));
 
 
 [h, w] = size(H);
-window_size = 6;
+window_size = 5;
 offset = floor(window_size / 2);
 corner_points = zeros(h, w);
 padded_H = padarray(H, [offset, offset]);
@@ -52,8 +52,8 @@ threshold = 100 * mean(mean(corner_points))
 
 figure, imshow(image);
 hold on
-plot(c, r, 'yo', 'LineWidth',1.5,...
-    'MarkerSize',8);
+plot(c, r, 'yo', 'LineWidth',1,...
+    'MarkerSize',10);
 hold off
 drawnow
 

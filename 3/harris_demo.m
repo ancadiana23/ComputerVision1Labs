@@ -1,3 +1,6 @@
+% demo of harris corner detector 
+
+% basic pingpong 
 fprintf("ping-pong \n")
 image = imread('./pingpong/0000.jpeg');
 [H1, r, c] = harris_corner_detector(image);
