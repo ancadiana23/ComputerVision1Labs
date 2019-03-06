@@ -45,28 +45,22 @@ H = H ./ max(max(H));
 window_size = 6;
 offset = floor(window_size / 2);
 corner_points = zeros(h, w);
-% pad the matrix so all the values (including the ones on the first and 
-% last rows/columns) can be handled in the same way
+% pad the matrix in order 
 padded_H = padarray(H, [offset, offset]);
 for i = 1:h
     for j = 1:w
         i2 = i + window_size - 1;
         j2 = j + window_size - 1;
         
-        % compare the elements in the window with the current element 
-        % (center of the window); if there are any higher elements set the 
-        % corner_point to zeros, otherwise set it to the value from H
         corner_points(i, j) = sum(sum(padded_H(i:i2, j:j2) > H(i, j))) == 0;
         corner_points(i, j) = corner_points(i, j) * H(i, j);
     end 
 end
 
-% find all the corner elements from the ones selected above that are
-% above a threshold and return their positions
+
 threshold = 100 * mean(mean(corner_points))
 [r, c] = find(corner_points > threshold);
 
-% plot the positions of the corners on the original image
 figure, imshow(image);
 hold on
 plot(c, r, 'yo', 'LineWidth',1.5,...
