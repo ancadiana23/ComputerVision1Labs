@@ -1,45 +1,55 @@
 function [H, r, c] = harris_corner_detector(image)
 
-gauss_kernel = fspecial('gaussian', [3, 3], 0.7);
-[Gx,Gy] = gradient(gauss_kernel);
+sigma = 0.9;
 
 I = rgb2gray(image);
-Ix = imfilter(I, Gx);
-Iy = imfilter(I, Gy);
+I = double(I);
+%I = imgaussfilt(I, sigma);
 
-%figure, imshow(Ix);
-%figure, imshow(Iy);
-%drawnow
+gauss_kernel = fspecial('gaussian', [5, 5], 0.6);
+[Gx,Gy] = gradient(gauss_kernel);
 
-A = imgaussfilt(Ix .^ 2);
-B = imgaussfilt(Ix .* Iy);
-C = imgaussfilt(Iy .^ 2);
+%Gy = [1 0 -1; 2 0 -2; 1 0 -1];
+%Gx = [1 2 1; 0 0 0; -1 -2 -1];
+
+Ix = conv2(I, Gx);
+Iy = conv2(I, Gy);
+
+figure, imshow(uint8(Ix));
+figure, imshow(uint8(Iy));
+drawnow
+
+A = imgaussfilt(Ix .^ 2, sigma);
+B = imgaussfilt(Ix .* Iy, sigma);
+C = imgaussfilt(Iy .^ 2, sigma);
 
 H = (A .* C - B.^2 ) - 0.04 * (A + C).^2;
+H = H ./ max(max(H));
 
-threshold = 220;
+%corner_points = imregionalmax(H,8);
+%corner_points = H .* corner_points;
 
-%corner_points = imregionalmax(H);
-%corner_points = double(H) .* double(corner_points);
 
 [h, w] = size(H);
-window_size = 5;
+window_size = 7;
 offset = floor(window_size / 2)
-new_corner_points = zeros(h, w);
+corner_points = zeros(h, w);
 padded_H = padarray(H, [offset, offset]);
-size(H)
-size(padded_H)
 for i = 1:h
     for j = 1:w
         i2 = i + window_size - 1;
         j2 = j + window_size - 1;
         
-        new_corner_points(i, j) = sum(sum(padded_H(i:i2, j:j2) > H(i, j))) == 0;
-        new_corner_points(i, j) = new_corner_points(i, j) * padded_H(i + 1, j + 1);
+        corner_points(i, j) = sum(sum(padded_H(i:i2, j:j2) > H(i, j))) == 0;
+        corner_points(i, j) = corner_points(i, j) * H(i, j);
     end 
 end
 
-[r, c] = find(new_corner_points > threshold);
+
+threshold = 50 * mean(mean(corner_points))
+%threshold = 0.0005
+
+[r, c] = find(corner_points > threshold);
 
 figure, imshow(image);
 hold on
