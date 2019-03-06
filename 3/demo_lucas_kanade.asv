@@ -1,0 +1,42 @@
+% read images synth1.pgm and synth2.pgm
+im1 = imread('synth1.pgm')
+im2 = imread('synth2.pgm')
+Vx_Vy = lucas_kanade(im1, im2);
+[h,w] = size(imread('synth1.pgm'));
+%display(Vx_Vy)
+size(Vx_Vy(:,:,1)');
+h = floor(h/15) * 15;
+w = floor(w/15) * 15;
+
+[x,y] = meshgrid(8:15:h,8:15:w);
+
+%size([x,y]);
+
+
+figure
+quiver(x,y,Vx_Vy(:,:,1)', Vx_Vy(:,:,2)')
+
+% compute the optical flow using 'lucas_kanade.m'
+
+im1 = rgb2gray(imread('sphere1.ppm'))
+im2 = rgb2gray(imread('sphere2.ppm'))
+imshow(im1)
+Vx_Vy = lucas_kanade(im1, im2);
+[h,w] = size(rgb2gray(imread('sphere1.ppm')))
+%display(Vx_Vy)
+size(Vx_Vy(:,:,1)')
+h = floor(h/15) * 15
+w = floor(w/15) * 15
+
+[x,y] = meshgrid(8:15:h,8:15:w);
+
+size([x,y])
+
+
+figure
+quiver(x,y,Vx_Vy(:,:,1)', Vx_Vy(:,:,2)')
+
+% plot the quiver on top of the original image
+
+% repeat for other images.
+
