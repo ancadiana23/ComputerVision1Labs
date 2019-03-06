@@ -77,4 +77,4 @@ function [vy_vx] = computeOpticalFlow(A,b)
 
 
 
-end
+end %test
