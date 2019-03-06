@@ -67,8 +67,7 @@ end
 
 
 % This function generates the A and b values for each of the blocks 
-% in the matlab cell. As input we have 15x15 matrices and output a
-% 225x2 matrix and a 225x1 vector.
+% in the matlab cell. As input we have 15x15 matrices
 function [A,b] = generateAb(block_Iy, block_Ix, block_It)
 
 [h,w] = size(block_Iy);
@@ -80,10 +79,6 @@ A(:,1) = block_Ix(:);
 
 end
 
-% Compute the optical flow using the formula from the exercise sheet
-% We decided to go for formula 19 and not 20 (even though it was stated
-% we should use 20, because we might occur the problem that a matrix is
-% not invertible and this might through errors in matlab)
 function [vy_vx] = computeOpticalFlow(A,b)
 
 [vy_vx,~] = linsolve(mtimes(A.',A), mtimes(A.',b));
