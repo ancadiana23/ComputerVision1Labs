@@ -1,6 +1,4 @@
-% demo of harris corner detector
 
-% basic pingpong
 fprintf("ping-pong \n")
 image = imread('./pingpong/0000.jpeg');
 [H1, r, c] = harris_corner_detector(image);
@@ -19,7 +17,8 @@ I_90 = imrotate(image, 90);
 
 [h, w, channels] = size(image);
 
-% it's interesting that the outputs are almost the same just a bit shifted
+% Plot the corners found on the original photo and the ones found on the 
+% images rotated by 90 degrees. They overlap.
 figure, imshow(image);
 hold on
 plot(c_0, r_0, 'o');
