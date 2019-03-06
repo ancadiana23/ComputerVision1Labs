@@ -1,6 +1,5 @@
 function [Vy_Vx] = lucas_kanade(im1, im2, blocksize)
 
-
 [h,w] = size(im1);
 % use the width and height of the images and the blocksize to compute the 
 % number of regions
