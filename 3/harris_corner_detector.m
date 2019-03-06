@@ -1,12 +1,12 @@
 function [H, r, c] = harris_corner_detector(image)
 
-sigma = 0.9;
+sigma = 0.8;
 
 I = rgb2gray(image);
 I = double(I);
-I = imgaussfilt(I, 0.7);
+I = imgaussfilt(I, sigma);
 
-gauss_kernel = fspecial('gaussian', [3, 3], 0.6);
+gauss_kernel = fspecial('gaussian');
 [Gx,Gy] = gradient(gauss_kernel);
 
 %Gy = [1 0 -1; 2 0 -2; 1 0 -1];
@@ -25,13 +25,15 @@ C = imgaussfilt(Iy .^ 2, sigma);
 
 H = (A .* C - B.^2 ) - 0.04 * ((A + C).^2);
 H = H ./ max(max(H));
-size_H = size(H)
-corner_points = imregionalmax(H,8);
-corner_points = H .* corner_points;
-%{
+
+% use build-in function to find the local maxima
+%corner_points = imregionalmax(H,8);
+%corner_points = H .* corner_points;
+
+
 [h, w] = size(H);
-window_size = 7;
-offset = floor(window_size / 2)
+window_size = 5;
+offset = floor(window_size / 2);
 corner_points = zeros(h, w);
 padded_H = padarray(H, [offset, offset]);
 for i = 1:h
@@ -43,10 +45,9 @@ for i = 1:h
         corner_points(i, j) = corner_points(i, j) * H(i, j);
     end 
 end
-%}
+
 
 threshold = 100 * mean(mean(corner_points))
-size_corner = size(corner_points)
 [r, c] = find(corner_points > threshold);
 
 figure, imshow(image);
