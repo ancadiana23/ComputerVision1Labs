@@ -2,7 +2,7 @@ function [Vy_Vx] = lucas_kanade(im1, im2)
 
 
 blocksize = 15;
-
+size(im1);
 [h,w] = size(im1);
 block_rows = floor(h/blocksize);
 block_columns = floor(w/blocksize);
@@ -36,7 +36,7 @@ for i = 1:block_rows
     M_blocks_It{i,j} = It(1 + (i-1)*blocksize:blocksize * i, 1+ (j-1)*blocksize: blocksize*j);
     
     [A,b] =generateAb(M_blocks_Iy{i,j},M_blocks_Ix{i,j}, M_blocks_It{i,j});
-    Vy_Vx(i,j,:) = computeOpticalFlow(A,b);
+    Vy_Vx(i,j,:) = -computeOpticalFlow(A,b);
     end
 end
 
@@ -65,8 +65,8 @@ function [A,b] = generateAb(block_Iy, block_Ix, block_It)
 A = zeros(h*w,2);
 
 b = -block_It(:);
-A(:,2) = block_Ix(:);
-A(:,1) = block_Iy(:);
+A(:,2) = block_Iy(:);
+A(:,1) = block_Ix(:);
 
 end
 

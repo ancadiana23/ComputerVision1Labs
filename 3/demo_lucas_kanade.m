@@ -14,7 +14,9 @@ w = floor(w/15) * 15;
 
 
 figure
-quiver(x,y,Vy_Vx(:,:,1), Vy_Vx(:,:,2))
+imshow(im1);
+hold on;
+quiver(x,y,Vy_Vx(:,:,1), Vy_Vx(:,:,2),'color',[1 0 0])
 
 % compute the optical flow using 'lucas_kanade.m'
 
@@ -35,7 +37,9 @@ size([x,y]);
 
 
 figure
-quiver(y,x,Vy_Vx(:,:,2), Vy_Vx(:,:,1)')
+imshow(im1);
+hold on;
+quiver(x,y,Vy_Vx(:,:,1), Vy_Vx(:,:,2),'color',[1 0 0])
 
 % plot the quiver on top of the original image
 
