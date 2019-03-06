@@ -1,17 +1,20 @@
-function [Vy_Vx] = lucas_kanade(im1, im2)
+function [Vy_Vx] = lucas_kanade(im1, im2, blocksize)
 
 
-blocksize = 15;
-size(im1);
 [h,w] = size(im1);
+% use the width and height of the images and the blocksize to compute the 
+% number of regions
 block_rows = floor(h/blocksize);
 block_columns = floor(w/blocksize);
+% initialize the matrices for the derivatives
 Ix = zeros(size(im1));
 Iy = zeros(size(im1));
 It = zeros(size(im1));
 
+% loop over every pixel
 for i = 1:h
     for j = 1:w
+        % apply our 'getDerivative' function to 
         [iy,ix,it] = getDerivative(i,j, im1, im2);
         Ix(i,j) = ix;
         Iy(i,j) = iy;

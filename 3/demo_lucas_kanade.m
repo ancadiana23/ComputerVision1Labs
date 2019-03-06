@@ -10,13 +10,16 @@ w = floor(w/15) * 15;
 
 [x,y] = meshgrid(8:15:h,8:15:w);
 
+imshow(im2)
+%imshow(im2)
+
 %size([x,y]);
 
 
 figure
 imshow(im1);
 hold on;
-quiver(x,y,Vy_Vx(:,:,1), Vy_Vx(:,:,2),'color',[1 0 0])
+q = quiver(x,y,Vy_Vx(:,:,1), Vy_Vx(:,:,2),'color',[1 0 0])
 
 % compute the optical flow using 'lucas_kanade.m'
 
@@ -37,10 +40,14 @@ size([x,y]);
 
 
 figure
-imshow(im1);
+imshow(imread('sphere2.ppm'));
 hold on;
-quiver(x,y,Vy_Vx(:,:,1), Vy_Vx(:,:,2),'color',[1 0 0])
+q = quiver(x,y,Vy_Vx(:,:,1), Vy_Vx(:,:,2),'color',[1 0 0]);
+q.AutoScaleFactor = 1.2;
+q.LineWidth = 1.2;
 
+
+%imshow(imread('sphere1.ppm'));
 % plot the quiver on top of the original image
 
 % repeat for other images.
