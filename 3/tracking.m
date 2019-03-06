@@ -24,8 +24,10 @@ rectangle(:, :, 2) = 255;
 for ii = 1:length(images) - 1
     ii
     Vy_Vx = lucas_kanade(images{ii}, images{ii + 1}, blocksize);
-    for jj = 1:3
-        %images{ii} = insertShape(images{ii}, 'rectangle', [r(jj), c(jj)]);
+    for jj = 1:length(r)
+        [dy dx] = Vy_Vx(ceil(r(jj) / blocksize), ceil(c(jj) / blocksize), :);
+        r(jj) = r(jj) + dy;
+        c(jj) = c(jj) + dx;
         images{ii}(r(jj)-1:r(jj)+1, c(jj)-1:c(jj)+1, :) = rectangle;
     end
 end
