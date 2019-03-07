@@ -1,10 +1,5 @@
+function [best_paramA, best_paramb, best_inlier_matrix, success_rate] = RANSOC(Ia,Ib,P)
 
-
-
-Ia = imread('boat1.pgm');
-Ib = imread('boat2.pgm');
-
-P = 25; % should become function input
 N = 400;
 
 
@@ -70,9 +65,8 @@ for j = 1:N
     end
 end
 
-best_n_inliers/n_matches
-best_paramA
-best_paramb
+success_rate = best_n_inliers/n_matches
+
 
 
 
