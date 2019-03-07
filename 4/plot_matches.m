@@ -1,29 +1,26 @@
+function [] = plot_matches(Ia,Ib)
+    Iab = [Ia Ib];
 
-Ia = imread('boat1.pgm');
-Ib = imread('boat2.pgm');
+    [matched_a,matched_b] = keypoint_matching(Ia,Ib);
 
-Iab = [Ia Ib];
-
-[matched_a,matched_b] = keypoint_matching(Ia,Ib);
-
-n_lines=10;
+    n_lines=10;
 
 
-imshow(Iab);
-n_matches = size(matched_a,2);
-perm = randperm(n_matches);
-shift = size(Ia,2)
-for i = 1:n_lines
-    % needlessly complicated color construction
-    colscale = nthroot(n_lines,3); 
-    r = (i/colscale^3 - floor(i/colscale^3));
-    g = (i/colscale^2 - floor(i/colscale^2));
-    b = (i/colscale - floor(i/colscale));
+    imshow(Iab);
+    n_matches = size(matched_a,2);
+    perm = randperm(n_matches);
+    shift = size(Ia,2)
+    for i = 1:n_lines
+        % needlessly complicated color construction
+        colscale = nthroot(n_lines,3); 
+        r = (i/colscale^3 - floor(i/colscale^3));
+        g = (i/colscale^2 - floor(i/colscale^2));
+        b = (i/colscale - floor(i/colscale));
 
-    match=perm(i);
-    line([matched_a(1,match),shift+matched_b(1,match)],[matched_a(2,match),matched_b(2,match)],'Color',[r g b],'LineWidth',2);
-end
-
+        match=perm(i);
+        line([matched_a(1,match),shift+matched_b(1,match)],[matched_a(2,match),matched_b(2,match)],'Color',[r g b],'LineWidth',2);
+    end
+ end
 
 
 % % plotting matched keypoints
