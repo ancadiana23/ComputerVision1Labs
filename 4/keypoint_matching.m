@@ -14,8 +14,8 @@ Ib = single(Ib);
 
 [matches, scores] = vl_ubcmatch(da, db);
 
-matched_a=fa(:,matches)
-matched_b=fa(:,matches)
+matched_a=fa(:,matches(1))
+matched_b=fb(:,matches(2))
 
 end
 
