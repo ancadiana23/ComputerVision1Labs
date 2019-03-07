@@ -1,4 +1,4 @@
-function [best_paramA, best_paramb, best_inlier_matrix, success_rate] = RANSAC(Ia,Ib,P,N)
+function [best_paramA, best_paramb, best_inlier_matrix, success_rates] = RANSAC(Ia,Ib,P,N)
 
 
 [matched_a,matched_b] = keypoint_matching(Ia,Ib);
@@ -15,8 +15,9 @@ best_n_inliers= 0;
 best_paramA= [];
 best_paramb= [];
 
+success_rates = []; %success rate after each iteration
 
-for j = 1:N
+for k = 1:N
     perm = randperm(n_matches) ;
     current_best_inlier_matrix = [];
     A = zeros(2*P, 6);
@@ -48,7 +49,7 @@ for j = 1:N
             current_best_inlier_matrix = [current_best_inlier_matrix.'; paramA*[x1;y1] + paramb].';
         end
     end
-    n_inliers/n_matches; %print success rate
+    
     if j==1 
         best_n_inliers=n_inliers;
         best_paramA=paramA;
@@ -61,9 +62,10 @@ for j = 1:N
         best_paramb=paramb;
         best_inlier_matrix = current_best_inlier_matrix;
     end
+    
+    success_rates(k) = best_n_inliers/n_matches;
 end
 
-success_rate = best_n_inliers/n_matches
 
 
 
