@@ -14,7 +14,7 @@ transformed_image = [];
 % If you get a out of index, becaus of negative indices, just increase the
 % padding value
 % Later on, the padding is removed.
-padding = 170;
+padding = 300;
 paramb_pad = paramb + padding;
 
 for j = 1:h
@@ -32,14 +32,8 @@ end
 % if in the results there is too much cut away at the border, this
 % may be the reason. If you want, you can also remove the unnecessary 
 % padding rows and columns by hand
-transformed_image = transformed_image(any(transformed_image,2),any(transformed_image,2) );
+transformed_image = transformed_image(any(transformed_image,2), :);
+transformed_image = transformed_image(:,any(transformed_image,1));
+
+%transformed_image = transformed_image(any(transformed_image,2),any(transformed_image,2) );
 end
-
-P = 25
-N = 500
-
-Ia = imread('boat1.pgm');
-Ib = imread('boat2.pgm');
-
-transformed_image = transform_image(Ia, Ib, P, N)
-imshow(transformed_image);
