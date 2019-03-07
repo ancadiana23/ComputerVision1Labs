@@ -1,6 +1,6 @@
 function [matched_a,matched_b] = keypoint_matching(Ia,Ib)
 
-run('vlfeat-0.9.21/toolbox/vl_setup') %one-time setup
+%run('vlfeat-0.9.21/toolbox/vl_setup') %one-time setup
 
 Ia = single(Ia);
 Ib = single(Ib);
