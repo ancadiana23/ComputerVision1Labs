@@ -7,7 +7,6 @@ plot_matches(Ia,Ib);
 
 
 
-
 % figuring out how many iterations we need
 sum_success_rates = success_rates
 for iteration = 2:10
