@@ -51,7 +51,7 @@ for k = 1:N
         x2 = matched_b(1,j);
         y2 = matched_b(2,j);
         % transform all the points and see, which ones lie in a radius of
-        % 10 pixels. These are then called 'inliers'
+        % 10 pixels. These are then called 'inliers' and counted towards
         deviation = paramA*[x1;y1] + paramb - [x2;y2];
         if norm(deviation)<=10
             n_inliers=n_inliers+1;
@@ -65,8 +65,6 @@ for k = 1:N
         best_paramb=paramb;
         best_inlier_matrix = current_best_inlier_matrix;
     end
-    % Now if we have more inliers (aka better transformation approximation)
-    % then before, we save all the data
     if n_inliers>best_n_inliers 
         best_n_inliers=n_inliers;
         best_paramA=paramA;
