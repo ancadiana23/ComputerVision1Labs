@@ -3,11 +3,12 @@ N = 100;
 
 Ia = imread('boat1.pgm');
 Ib = imread('boat2.pgm');
-
+size(Ia)
+size(Ib)
 % Demo for matched keypoints
 figure
 plot_matches(Ia,Ib);
-
+%{
 % Demo for the image transformation
 P = 25;
 N = 500;
@@ -86,5 +87,5 @@ plot(1:size(avg_success_rates,2),avg_success_rates);
 
 % Demo for the image trasformation
 
-
+%}
 

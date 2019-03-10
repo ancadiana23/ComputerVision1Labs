@@ -14,7 +14,7 @@ transformed_image = [];
 % If you get a out of index, becaus of negative indices, just increase the
 % padding value
 % Later on, the padding is removed.
-padding = 300;
+padding = 500;
 paramb_pad = paramb + padding;
 
 for j = 1:h
