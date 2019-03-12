@@ -40,9 +40,9 @@ figure(5), plot_matches(Ia(start:end, 1:stop),transformed_image_imwarp_1(:, 1:st
 %matched_a = matched_a(:, filter_matches);
 %matched_b = matched_b(:, filter_matches);
 
-[x_diff, y_diff] = RANSAC_stitch(Ia, transformed_image_imwarp_1, P, N);
-%x_diff = round(sum((w_left - matched_a(1, :) + matched_b(1, :))) / size(matched_a, 2))
-%y_diff = round(sum((matched_a(2, :) - matched_b(2, :))) / size(matched_a, 2))
+[x_diff, y_diff]RANSAC_stitch(Ia, transformed_image_imwarp_1, P, N);
+x_diff = round(sum((w_left - matched_a(1, :) + matched_b(1, :))) / size(matched_a, 2))
+y_diff = round(sum((matched_a(2, :) - matched_b(2, :))) / size(matched_a, 2))
 
 Ib_new = zeros(size(Ia));
 if y_diff > 0
