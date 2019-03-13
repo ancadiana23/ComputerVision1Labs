@@ -7,44 +7,43 @@ Ib = rgb2gray(I_right);
 figure(1), imshow(Ia);
 figure(2), imshow(Ib);
 
+P = 5;
+N = 5000;
 
-P = 3;
-N = 1000;
 % transforming image2 so that it fits image1
-transformed_image = transform_image(Ia, Ib, P, N);
-figure(3), imshow(transformed_image);
+transformed = transform_image(I_left, I_right, P, N);
+figure(3), imshow(transformed);
 
-[paramA, paramb, best_inlier_matrix, success_rates] = RANSAC(Ib,Ia, P, N);
-tform1 = paramA';
-tform1(3,3) = 1;
-tform1 = affine2d(tform1);
-transormed = imwarp(Ib, tform1);
+% get the image transformation prameters
+[paramA, paramb, best_inlier_matrix, success_rates] = RANSAC(Ib, Ia, P, N);
 
-figure(4), imshow(transormed);
+% get the sizes of the different images
+[h_left w_left, c] = size(I_left);
+[h_right w_right, c] = size(I_right);
+[h_t w_t, c] = size(transformed);
 
-[h_left w_left] = size(Ia);
-[h_right w_right] = size(transormed);
+% compute the transformation of the following corners
 % top_left, top_right, bottom_right, bottom_left 
-new_corners = round((paramA * [1 1; 1 w_right;  h_right w_right; h_right 1]')')
-y1 =  min(new_corners(:, 1, :));
-y2 =  max(new_corners(:, 1, :));
-x1 =  min(new_corners(:, 2, :));
-x2 =  max(new_corners(:, 2, :));
+new_corners = round((paramA * [1 1; w_right 1;  w_right h_right;  1 h_right]')' ...
+                    + paramb')
 
-Inew = zeros(max([h_left, y2]), w_left - x1 + x2);
+% get the extremities of the transformed corners
+y1 =  min(new_corners(:, 2));
+y2 =  max(new_corners(:, 2));
+x1 =  min(new_corners(:, 1));
+x2 =  max(new_corners(:, 1));
 
-fprintf("-----------------")
-size(Ia)
-size(Inew(1:h_left, 1:w_left))
-fprintf("=================")
-size(transormed)
-%size(Inew(y1:y2, w_left+x1:w_left+x1+x2))
-fprintf("-----------------"+ '\n')
-fprintf((y1+17) + " | " + (y1+h_right-1+17) + " | " + (w_left-x1-60) + " | " + (w_left-x1+w_right-1-60) + '\n')
-fprintf(x1 + " | " + x2 + " | " + y1 + " | " + y2 + '\n')
+% compute the size of the new image
+% on each axis take the difference between the highest and lowest points
+% in either the left image or the new transformd right image
+width = max(x2,w_left) - min(x1,1) + 1;
+height = max(y2,h_left) - min(y1,1) + 1;
 
-Inew(y1+17:y1+h_right-1+17, w_left - x1 -60: w_left - x1 + w_right-1-60) = transormed;
-Inew(1:h_left, 1:w_left) = Ia;
-figure(6), imshow(uint8(Inew))
-
+% create the new image
+I_new = zeros([height, width, c]);
+% multiply the values of the pixels i the transformed image with 255 
+% in oreder to have the same 
+I_new(y1:y1 + h_t-1, x1:x1+w_t-1, :) = transformed * 255;
+I_new(1:h_left, 1:w_left, :) = I_left;
+figure(6), imshow(uint8(I_new));
 

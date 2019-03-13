@@ -25,7 +25,7 @@ transformed_image = transform_image(Ib, Ia, P, N);
 figure
 imshow(transformed_image);
 
-%{
+
 % Using the imwarp method from matlab:
 
 % transforming image2 so that it fits image1
@@ -87,4 +87,4 @@ plot(1:size(avg_success_rates,2),avg_success_rates);
 
 
 % Demo for the image trasformation
-%}
+

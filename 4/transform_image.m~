@@ -14,11 +14,11 @@ new_corners = round((paramA * [1 1; w 1;  w h;  1 h]')' ...
 new_h = max(new_corners(:, 2)) - min(new_corners(:, 2)) + 300;
 new_w = max(new_corners(:, 1)) - min(new_corners(:, 1)) + 300;
 
-[h,w, c] = size(Ib);
+
 % initialize transformed_image
-transformed_image = zeros([new_h new_w, c]);
+transformed_image = zeros([new_h new_w]);
 
-
+[h,w] = size(Ib);
 
 % paramb is the horizontal and vertical translation.
 % here we add a rather large value, so we do not get negative indices,
@@ -46,8 +46,8 @@ end
 % if in the results there is too much cut away at the border, this
 % may be the reason. If you want, you can also remove the unnecessary 
 % padding rows and columns by hand
-transformed_image = transformed_image(any(sum(transformed_image, 3),2), :, :);
-transformed_image = transformed_image(:,any(sum(transformed_image, 3),1), :);
+transformed_image = transformed_image(any(transformed_image,2), :);
+transformed_image = transformed_image(:,any(transformed_image,1));
 
 %transformed_image = transformed_image(any(transformed_image,2),any(transformed_image,2) );
 end
