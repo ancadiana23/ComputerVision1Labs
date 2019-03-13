@@ -19,8 +19,8 @@ Ib = single(Ib);
 
 % here we save the information about the relevant matching regions\pixel
 % and return it as return-values.
-matched_a=fa(:,matches(1,:));
-matched_b=fb(:,matches(2,:));
+matched_a=fa(1:2,matches(1,:));
+matched_b=fb(1:2,matches(2,:));
 
 end
 

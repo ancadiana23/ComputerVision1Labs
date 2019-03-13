@@ -9,7 +9,7 @@ function [] = plot_matches(Ia,Ib)
     n_matches = size(matched_a,2);
     perm = randperm(n_matches);
     shift = size(Ia,2)
-    for i = 1:n_matches
+    for i = 1:10
         % needlessly complicated color construction
         colscale = nthroot(n_lines,3); 
         r = (i/colscale^3 - floor(i/colscale^3));
