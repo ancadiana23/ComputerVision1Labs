@@ -1,6 +1,5 @@
 function [best_paramA, best_paramb, best_inlier_matrix, success_rates] = RANSAC(Ia,Ib,P,N)
 
-
 [matched_a,matched_b] = keypoint_matching(Ia,Ib);
 
 n_matches = size(matched_a,2);

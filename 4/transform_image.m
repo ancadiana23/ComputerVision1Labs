@@ -9,21 +9,20 @@ end
 
 [h w] = size(Ib);
 new_corners = round((paramA * [1 1; w 1;  w h;  1 h]')' ...
-                    + paramb')
+                    + paramb');
 
 new_h = max(new_corners(:, 2)) - min(new_corners(:, 2)) + 300;
 new_w = max(new_corners(:, 1)) - min(new_corners(:, 1)) + 300;
 
 [h,w, c] = size(Ib);
+
 % initialize transformed_image
 transformed_image = zeros([new_h new_w, c]);
-
-
 
 % paramb is the horizontal and vertical translation.
 % here we add a rather large value, so we do not get negative indices,
 % after transforming the image.
-% If you get a out of index, becaus of negative indices, just increase the
+% If you get an out of index, because of negative indices, just increase the
 % padding value
 % Later on, the padding is removed.
 paramb_pad = paramb + 200;

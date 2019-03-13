@@ -1,10 +1,13 @@
-function [] = stitch(I_left, I_right, P , N)
+function [I_new] = stitch(I_left, I_right)
 
 Ia = rgb2gray(I_left);
 Ib = rgb2gray(I_right);
 
 figure(1), imshow(Ia);
 figure(2), imshow(Ib);
+
+P = 5;
+N = 50;
 
 % transforming image2 so that it fits image1
 transformed = transform_image(I_left, I_right, P, N);
@@ -21,7 +24,7 @@ figure(3), imshow(transformed);
 % compute the transformation of the following corners
 % top_left, top_right, bottom_right, bottom_left 
 new_corners = round((paramA * [1 1; w_right 1;  w_right h_right;  1 h_right]')' ...
-                    + paramb');
+                    + paramb')
 
 % get the extremities of the transformed corners
 y1 =  min(new_corners(:, 2));
