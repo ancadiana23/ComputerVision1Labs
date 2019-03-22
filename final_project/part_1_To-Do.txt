@@ -1,0 +1,39 @@
+
+DATASET:
+	- 5 classes: airplanes, birds, ships, horses and cars [STL-10 dataset]
+	- For each class: 500 training images, 800 testing images (96x96 RGB)
+	- http://ai.stanford.edu/~acoates/stl10/stl10_matlab.tar.gz
+	- only use 'train.mat' and 'test.mat' file (not 'unlabeled.mat')
+
+
+
+Approach:
+	- Bag of Words: see "http://www.robots.ox.ac.uk/~az/icvss08_az_bow.pdf"
+
+
+
+
+1.1 Training Phase:
+
+1.2 Testing Phase:
+
+
+
+2 Bag-of-Words based Image Classification
+
+	1. Feature extraction and description
+	2. Building a visual vocabulary
+	3. Quantize features using visual dictionary (encoding)
+	4. Representing images by frequencies of visual words
+	5. Classification
+
+
+2.1 Feature Extraction and Description
+
+
+
+
+
+
+
+
