@@ -2,7 +2,7 @@ function [net, info, expdir] = finetune_cnn(varargin)
 
 %% Define options
 run(fullfile(fileparts(mfilename('fullpath')), ...
-  '..', '..', '..', 'matlab', 'vl_setupnn.m')) ;
+  '..', '..', 'matconvnet-1.0-beta23', 'matlab', 'vl_setupnn.m')) ;
 
 opts.modelType = 'lenet' ;
 [opts, varargin] = vl_argparse(opts, varargin) ;
@@ -20,15 +20,13 @@ opts.train = struct() ;
 opts = vl_argparse(opts, varargin) ;
 if ~isfield(opts.train, 'gpus'), opts.train.gpus = []; end;
 
-opts.train.gpus = [0];
+%% opts.train.gpus = [0];
 
 
 
 %% update model
 
 net = update_model();
-
-%% TODO: Implement getIMDB function below
 
 if exist(opts.imdbPath, 'file')
   imdb = load(opts.imdbPath) ;
@@ -70,7 +68,7 @@ end
 function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
 images = imdb.images.data(:,:,:,batch) ;
-labels = imdb.images.labels(1,batch) ;
+labels = imdb.images.labels(batch, 1) ;
 if rand > 0.5, images=fliplr(images) ; end
 
 end
@@ -81,12 +79,12 @@ function imdb = getIMDB()
 % Preapre the imdb structure, returns image data with mean image subtracted
 classes = {'airplanes', 'birds', 'ships', 'horses', 'cars'};
 splits = {'train', 'test'};
-%% In original data: 10 classes: 'airplanes' = 1; 'bird' = 2
+%% In original data: 10 classes: 'airplanes' = 1; 'bird' = 2; ...
 relevant_labels = [1 2 9 7 3];
 
-%% TODO: Implement your loop here, to create the data structure described in the assignment
 %% Use train.mat and test.mat we provided from STL-10 to fill in necessary data members for training below
-%% You will need to, in a loop function,  1) read the image, 
+%% You will need to, in a loop function  
+%% 1) read the image
 %% 2) resize the image to (32,32,3), 
 %% 3) read the label of that image
 
@@ -94,6 +92,7 @@ relevant_labels = [1 2 9 7 3];
 %% imdb.images.labels: 1D vector: airplanes(1), birds(2), ships(3), horses(4), cars(5)
 %% imdb.images.set is a 1D vector training (== 1) or the testing (== 2) 
 
+%% load train and test images
 train = load('stl10_matlab/train.mat');
 test = load('stl10_matlab/test.mat');
 
@@ -102,14 +101,13 @@ test = load('stl10_matlab/test.mat');
 ids_train = find(ismember(train.y, relevant_labels));
 ids_test= find(ismember(test.y, relevant_labels));
 
-%% select relevant images
+%% select relevant images and according labels
 train.X = train.X(ids_train, :);
 train.y = train.y(ids_train, :);
 test.X = test.X(ids_test, :);
 test.y = test.y(ids_test, :);
 
-%% convert labels to 1:5
-
+%% convert labels to 1:5 -> needed for classifier
 %% train data
 for i = 1:length(train.y)
    if train.y(i) == 9
@@ -130,30 +128,32 @@ for i = 1:length(test.y)
        test.y(i) = 5;
    end
 end
-%% reshape per image to 96x96x3 (image_width, image_height, num_channel)
-%% train has 500 per class so 2500x96x96x3 for all train images
+
+%% reshape per image to original size 96x96x3 (image_width, image_height,
+%% num_channel)
+%% train has 500 images per class so 2500x96x96x3 for all train images
 train.X = reshape(train.X, 2500, 96, 96, 3);
 %% test has 800 per class so 4000x96x96x3 for all test images
 test.X = reshape(test.X, 4000, 96, 96, 3);
 
 %% build data; set and labels
 %% data is filled with train.X and test.X
-data = zeros(96, 96, 3, length(train.y) + length(test.y));
-labels = zeros(length(train.y) + length(test.y), 1);
-sets = zeros(length(train.y) + length(test.y), 1);
+data = zeros(32, 32, 3, length(train.y) + length(test.y), 'single'); %% single format essential
+labels = zeros(length(train.y) + length(test.y), 1, 'single');
+sets = zeros(length(train.y) + length(test.y), 1, 'single');
 
+%% resizing to 32x32x3 necessary to transfer images to pretrain model 
 for i = 1:length(train.y)
-    data(:,:,:,i) = train.X(i,:,:,:);
+    data(:,:,:,i) = imresize(squeeze(train.X(i,:,:,:)), 0.333);
     labels(i) = train.y(i);
     sets(i) = 1;
 end
 for i = (length(train.y)+1):(length(train.y)+length(test.y))
-    data(:,:,:,i) = test.X(i-length(train.y),:,:,:);
+    data(:,:,:,i) = imresize(squeeze(test.X(i-length(train.y),:,:,:)), 0.333);
     labels(i) = test.y(i-length(train.y));
+    sets(i) = 2;
 end
 
-
-%% 
 % subtract mean
 dataMean = mean(data(:, :, :, sets == 1), 4);
 data = bsxfun(@minus, data, dataMean);
