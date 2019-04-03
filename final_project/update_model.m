@@ -1,26 +1,25 @@
+
 function net = update_model(varargin)
 opts.networkType = 'simplenn' ;
 opts = vl_argparse(opts, varargin) ;
 
-
-%% TODO: PLAY WITH THESE PARAMETERTS TO GET A BETTER ACCURACY
-
-lr_prev_layers = [0.01, 0.01];
-lr_new_layers  = [0.1, 0.1]; 
+lr_prev_layers = [0.02, 0.2];
+lr_new_layers  = [0.05, 0.5]; 
 
 lr = lr_prev_layers ;
 
 % Meta parameters
 net.meta.inputSize = [32 32 3] ;
-net.meta.trainOpts.learningRate = [ 0.05*ones(1,20) ...
-                                    0.005*ones(1,20)...
-                                    0.0005*ones(1,10)...
+net.meta.trainOpts.learningRate = [ 
+                                    0.05*ones(1,30) ...
+                                    0.005*ones(1,30)...
+                                    0.0005*ones(1,20)...
                                     0.00005*ones(1,10)...
-
                                     ] ;
-net.meta.trainOpts.weightDecay = 0.0005 ;
+                                
+net.meta.trainOpts.weightDecay = 0.0075 ;
 net.meta.trainOpts.batchSize = 100 ;
-net.meta.trainOpts.numEpochs = 40 ;
+net.meta.trainOpts.numEpochs = 120 ;
 
 %% Define network 
 net.layers = {} ;
