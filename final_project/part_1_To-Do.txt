@@ -32,6 +32,11 @@ Approach:
 
 
 
+Experiments:
+
+- Use different clustering method, not knn, k-means, but one with different variances etc. from ML
+- Only see IF a cluster appears for an image, not how often (aka binary)
+
 
 
 

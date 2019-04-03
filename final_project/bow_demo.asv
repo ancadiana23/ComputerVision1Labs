@@ -153,14 +153,8 @@ svm_train_images_bow_hist_ships = [];
 % 2.4 Representing images by frequencies of visual words
 % 1. represent image by words and their frequencies (histogram of its visual words)
 % 2. normalize histogram
-% This is all done in the 'find_cluster_vector'-function
-
-
 
 % for i = (train_image_count_cluster/5+1):train_image_count/5
-
-% Here we create the words for the different class-images. These will be
-% used for training the SVMs
 for i = train_image_count_cluster/5+1:train_image_count_cluster/5+100
    [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_air(i,:,:,:))))));
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
@@ -187,7 +181,7 @@ end
 toc
 
 
-%size(svm_train_images_bow_hist_ships)
+size(svm_train_images_bow_hist_ships)
 
 
 % 2.5 Classification
@@ -255,8 +249,7 @@ test_data_count = 40;
 
 test_data = test_images_raw_data(1:test_data_count,:,:,:);
 test_label = test_class_label(1:test_data_count);
-% test_hist represents the histograms of the test data. On these histograms
-% we will apply the SVM classifier.
+% Get test_data
 test_hist = [];
 for i = 1:test_data_count
    [~, descr] = vl_sift(single(rgb2gray((squeeze(test_data(i,:,:,:))))));
