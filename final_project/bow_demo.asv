@@ -103,7 +103,7 @@ cluster_train_descr_matrix = [];
 
 
 for i = 1:train_image_count_cluster
-   [train_images_sift{i}, train_images_descr{i}] = my_sift(cluster_train_images(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
+   [train_images_sift{i}, train_images_descr{i}] = my_sift(cluster_train_images(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR)));
    cluster_train_descr_matrix = [cluster_train_descr_matrix; train_images_descr{i}'];
 end
 toc
@@ -164,23 +164,23 @@ svm_train_images_bow_hist_ships = [];
 % Here we create the words for the different class-images. These will be
 % used for training the SVMs
 for i = train_image_count_cluster/5+1:train_image_count_cluster/5+100
-   [~, descr] = my_sift(train_images_cl_air(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
+   [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_air(i,:,:,:))))));
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
    svm_train_images_bow_hist_air = cat(1,svm_train_images_bow_hist_air,cluster_vector);
    
-   [~, descr] = my_sift(train_images_cl_birds(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
+   [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_birds(i,:,:,:))))));
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
    svm_train_images_bow_hist_birds = cat(1,svm_train_images_bow_hist_birds,cluster_vector);
    
-   [~, descr] = my_sift(train_images_cl_cars(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
+   [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_cars(i,:,:,:))))));
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
    svm_train_images_bow_hist_cars = cat(1,svm_train_images_bow_hist_cars,cluster_vector);
    
-   [~, descr] = my_sift(train_images_cl_horses(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
+   [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_horses(i,:,:,:))))));
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
    svm_train_images_bow_hist_horses = cat(1,svm_train_images_bow_hist_horses,cluster_vector);
    
-   [~, descr] = my_sift(train_images_cl_ships(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
+   [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_ships(i,:,:,:))))));
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
    svm_train_images_bow_hist_ships = cat(1,svm_train_images_bow_hist_ships,cluster_vector);
    
@@ -261,7 +261,7 @@ test_label = test_class_label(1:test_data_count);
 % we will apply the SVM classifier.
 test_hist = [];
 for i = 1:test_data_count
-   [~, descr] = my_sift(test_data(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
+   [~, descr] = vl_sift(single(rgb2gray((squeeze(test_data(i,:,:,:))))));
     cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
     test_hist = [test_hist; cluster_vector];
 end
