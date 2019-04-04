@@ -7,7 +7,6 @@ train_data = load('stl10_matlab/train.mat');
 % Set of global variables
 CLUSTER_COUNT = 400; % 400, 1000, 4000; number of KNN cluster
 
-
 use_test = false;
 
 
@@ -15,11 +14,18 @@ use_test = false;
 % reshape and store the 8000 test_images in a (8000, 96, 96, 3) sized
 % vector
 test_images_raw_data = reshape(test_data.X, test_image_count, 96, 96, 3);
-test_classes_label = test_data.y;
+test_class_label = test_data.y;
 
 % reshape and store the 5000 test_images in a (5000, 96, 96, 3) sized
 % vector
 train_images_raw_data = reshape(train_data.X,train_image_count, 96, 96, 3);
+
+train_knn_image_count = 
+
+train_images_raw_data = reshape(train_data.X,train_image_count, 96, 96, 3);
+
+
+
 train_class_label = train_data.y;
 
 % Before we want to train a BoW based Image Classifier, we need to do the
@@ -47,7 +53,7 @@ if use_test
     test_descr_matrix = [];
 
     for i = 1:test_image_count
-       [test_images_sift{i}, test_images_descr{i}] = vl_sift(single(rgb2gray((squeeze(t(i,:,:,:))))));
+       [test_images_sift{i}, test_images_descr{i}] = vl_sift(single(rgb2gray((squeeze(test_images_raw_data(i,:,:,:))))));
        test_descr_matrix = [test_descr_matrix; test_images_descr{i}'];
 
     end
@@ -56,14 +62,14 @@ end
 
 % Similar for train images
 tic
-train_images_sift = {};
-train_images_descr = {};
-train_descr_matrix = [];
+train_knn_images_sift = {};
+train_knn_images_descr = {};
+train_knn_descr_matrix = [];
 
 
 for i = 1:test_image_count
-   [train_images_sift{i}, train_images_descr{i}] = vl_sift(single(rgb2gray((squeeze(t(i,:,:,:))))));
-   train_descr_matrix = [train_descr_matrix; train_images_descr{i}'];
+   [train_images_sift{i}, train_images_descr{i}] = vl_sift(single(rgb2gray((squeeze(train_images_raw_data(i,:,:,:))))));
+   train_knn_descr_matrix = [train_knn_descr_matrix; train_knn_images_descr{i}'];
 end
 toc
 % Taking only a part of the data for speed reasons
@@ -91,6 +97,7 @@ train_im_s_part = train_images_sift(1:train_im_c_part);
 % descriptors.
 
 % take all descriptor data into one large matrix ()
+
 tic
 [~, C] = kmeans(double(train_descr_matrix), CLUSTER_COUNT) 
 toc % for 500 images and 400 cluster it takes ~22 seconds
@@ -98,7 +105,8 @@ toc % for 500 images and 400 cluster it takes ~22 seconds
 % This cluster defines a vocabulary: one cluster is one word. 
 % 1 image = set of words
 
-% define function 'get bow_vector' that returns the cluster representation
+
+% define function 'get_bow_vector' that returns the cluster representation
 % of an image (returns an 1x400 array)
 % -> we need train_image_count x CLUSTER_COUNT array
 % looking at all possible cluster centre seems to be the easiest way to
