@@ -278,11 +278,43 @@ newX = test_hist;
 [~ , score_horses] = predict(SVMModel_horses,newX);
 [~ , score_ships] = predict(SVMModel_ships,newX);
 
-score_air
-[air_sort, air_order] = sort(score_air(:,2));
-air_sort
-test_label_sorted = test_label(air_order,:)
-test_data_sorted = test_data(air_order,:,:,:);
+%score_air
+%[air_sort, air_order] = sort(score_air(:,2));
+%air_sort
+%test_label_sorted = test_label(air_order,:);
+%test_data_sorted = test_data(air_order,:,:,:);
+
+
+[~, air_order] = sort(score_air(:,2));
+data_sorted_air = test_data(air_order,:,:,:);
+label_sorted_air = test_label(air_order,:);
+label_sorted_air = label_sorted_air == 1;
+mAP_air = get_map(label_sorted_air;
+
+[~, birds_order] = sort(score_birds(:,2));
+data_sorted_birds = test_data(birds_order,:,:,:);
+label_sorted_birds = test_label(birds_order,:);
+label_sorted_birds = label_sorted_birds == 2;
+mAP_birds = get_map(label_sorted_birds);
+
+[~, cars_order] = sort(score_cars(:,2));
+data_sorted_cars = test_data(cars_order,:,:,:);
+label_sorted_cars = test_label(cars_order,:);
+label_sorted_cars = label_sorted_cars == 3;
+mAP_cars = get_map(label_sorted_cars);
+
+[~, horses_order] = sort(score_horses(:,2));
+data_sorted_horses = test_data(horses_order,:,:,:);
+label_sorted_horses = test_label(horses_order,:);
+label_sorted_horses = label_sorted_horses == 7;
+mAP_horses = get_map(label_sorted_horses);
+
+[~, ships_order] = sort(score_ships(:,2));
+data_sorted_ships = test_data(ships_order,:,:,:);
+label_sorted_ships = test_label(ships_order,:);
+label_sorted_ships = label_sorted_ships == 9;
+mAP_ships = get_map(label_sorted_ships);
+
 
 for i=1:5
     hAxes = axes( figure ); % I usually use figure; hAxes = gca; here, but this is even more explicit.
@@ -301,5 +333,17 @@ end
 % Maybe even create a custom_sift_function, with one additional parameter,
 % that decides on the type of sift function. This parameter can then be set
 % at the start of the demo.
+
+% 1. create get_map function , done
+
+% 2. understand how the results should be processed:
+% create a list of results for each binary classifier 
+% (one for airplanes, one for birds , one for cars, ...) of score-values
+% sort by that score-value
+
+% 3. write method to save first 5 and last 5 images  in subfolder
+
+% 4. save the results of mAP, according to the classes, in a file, where
+% its name indicates the settings
 
 
