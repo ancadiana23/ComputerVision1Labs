@@ -1,4 +1,3 @@
-
 function net = update_model(varargin)
 opts.networkType = 'simplenn' ;
 opts = vl_argparse(opts, varargin) ;
@@ -20,6 +19,7 @@ net.meta.trainOpts.learningRate = [
 net.meta.trainOpts.weightDecay = 0.0075 ;
 net.meta.trainOpts.batchSize = 50 ;
 net.meta.trainOpts.numEpochs = 80 ;
+
 
 %% Define network 
 net.layers = {} ;

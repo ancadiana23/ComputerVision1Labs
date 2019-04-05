@@ -1,4 +1,4 @@
-    function [net, info, expdir] = finetune_cnn(varargin)
+function [net, info, expdir] = finetune_cnn(varargin)
 
 %% Define options
 run(fullfile(fileparts(mfilename('fullpath')), ...

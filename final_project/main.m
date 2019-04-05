@@ -1,20 +1,35 @@
 %% main function 
+
+
 %% fine-tune cnn
+
 [net, info, expdir] = finetune_cnn();
 
-%% clear workspace
+%% extract features and train svm
+
+nets.fine_tuned = load(fullfile(expdir, 'your_new_model.mat')); nets.fine_tuned = nets.fine_tuned.net;
+nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); nets.pre_trained = nets.pre_trained.net; 
+data = load(fullfile(expdir, 'imdb-stl.mat'));
+
+[net, info, expdir] = finetune_cnn();
+
+%% Hyper Parameter Tuning
+
 clear, clc
-%% folder of trained mat objects
 expdir = 'data/cnn_assignment-lenet';
 
-for batchsize = 50:50:100
-    for epoch = 40:40:120
-        nets.fine_tuned = load(fullfile(expdir, strcat('batch_',num2str(batchsize),'-', num2str(epoch),'.mat'))); 
+res_cell = {};
+ix = 1;
+
+for bs = 50:50:100
+    for ep = 40:40:120
+        nets.fine_tuned = load(fullfile(expdir, strcat('b',num2str(bs),'_e', num2str(ep),'.mat'))); 
         nets.fine_tuned = nets.fine_tuned.net;
         nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); 
         nets.pre_trained = nets.pre_trained.net; 
         data = load(fullfile(expdir, 'imdb-stl.mat'));
-        train_svm(nets, data);
+        res_cell{ix} = train_svm(nets, data);
+        ix = ix+1;
     end
 end
 
@@ -70,7 +85,5 @@ savefig('results/tsne_pre.fig')
 figure2 = figure('Color',[1 1 1]);
 tsne_fine = tsne(vertcat(svm.fine_tuned.trainset.features,svm.fine_tuned.testset.features),  vertcat(svm.fine_tuned.trainset.labels, svm.fine_tuned.testset.labels));
 savefig('results/tsne_fine.fig')
-
-
 
 
