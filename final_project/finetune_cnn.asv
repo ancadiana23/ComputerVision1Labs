@@ -71,24 +71,22 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 images = imdb.images.data(:,:,:,batch) ;
 labels = imdb.images.labels(batch, 1) ;
 
+    
 % Flip in left/right direction
 rnumber1 = rand;
-
 if rnumber1 > 0.66
     images = fliplr(images);
-end    
+    
 % Apply random rotation
 rnumber2 = rand;
 
 if (rnumber2 < 0.66) && (rnumber2 > 0.33)       
     images = imrotate(images ,(1-rnumber2)*25, 'bilinear', 'crop');
-end    
-
+    
 % rescale between 0.3 and 1 of original image
-rnumber3 = rand;
-if rnumber3 < 0.33 
+if rnumber < 0.33 
     images = imresize(images, 1.1);   
-    images = images(3:34,3:34,:,:);
+    im
 end
 end
 
