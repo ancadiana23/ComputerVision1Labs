@@ -7,9 +7,9 @@ train_data = load('stl10_matlab/train.mat');
 [train_image_count, ~] = size(train_data.X);
 
 % Set of global variables
-CLUSTER_COUNT = 1000; % 400, 1000, 4000; number of KNN cluster
-SIFT_SAMPLING = "dense"; % "keypoint", "dense"
-SIFT_COLOR = "rgb"; % "gray", "rgb", "opponent"
+CLUSTER_COUNT = 400; % 400, 1000, 4000; number of KNN cluster
+SIFT_SAMPLING = "keypoint"; % "keypoint", "dense"
+SIFT_COLOR = "gray"; % "gray", "rgb", "opponent"
 
 % Data Preprocessing
 display('Data Preprocessing...')
@@ -104,9 +104,12 @@ cluster_train_descr_matrix = [];
 
 
 for i = 1:train_image_count_cluster
-   train_images_descr{i} = my_sift(cluster_train_images(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
-   cluster_train_descr_matrix = [cluster_train_descr_matrix; train_images_descr{i}'];
+   train_images_descr = my_sift(cluster_train_images(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
+   cluster_train_descr_matrix = [cluster_train_descr_matrix; train_images_descr'];
 end
+
+display('cluster_train_descr_matrix')
+size(cluster_train_descr_matrix)
 toc
 
 % using vl_sift data , we use knn clustering to cluster
@@ -119,6 +122,7 @@ toc
 display('Training Kmeans...')
 tic
 [~, C] = kmeans(double(cluster_train_descr_matrix), CLUSTER_COUNT); 
+size(C)
 toc 
 % for 500 images and 400 cluster it takes ~22 seconds
 
@@ -168,7 +172,8 @@ svm_train_images_bow_hist_ships = [];
 % used for training the SVMs
 
 training_size = 2500 - train_image_count_cluster;
-
+train_image_count_cluster
+training_size
 for i = train_image_count_cluster/5+1:2500/5
    descr = my_sift(train_images_cl_air(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
@@ -252,14 +257,14 @@ hImage = imshow(rgb2gray(squeeze(train_images_cl_air(i,:,:,:))), 'Parent', hAxes
 
 
 size(Y_air')
-SVMModel_air = fitcsvm(X,Y_air');%,'KernelFunction','gaussian');
-SVMModel_birds = fitcsvm(X,Y_birds');%,'KernelFunction','gaussian');
-SVMModel_cars = fitcsvm(X,Y_cars');%,'KernelFunction','gaussian');
-SVMModel_horses = fitcsvm(X,Y_horses');%,'KernelFunction','gaussian');
-SVMModel_ships = fitcsvm(X,Y_ships');%,'KernelFunction','gaussian');
+SVMModel_air = fitcsvm(X,Y_air','Cost',[0 4;1 0], 'ClassNames',[0,1],'KernelFunction','linear');
+SVMModel_birds = fitcsvm(X,Y_birds','Cost',[0 4;1 0], 'ClassNames',[0,1],'KernelFunction','linear');
+SVMModel_cars = fitcsvm(X,Y_cars','Cost',[0 4;1 0], 'ClassNames',[0,1],'KernelFunction','linear');
+SVMModel_horses = fitcsvm(X,Y_horses','Cost',[0 4;1 0], 'ClassNames',[0,1],'KernelFunction','linear');
+SVMModel_ships = fitcsvm(X,Y_ships','Cost',[0 4;1 0], 'ClassNames',[0,1],'KernelFunction','linear');
 toc
 
-display('Initiating testing phase...\n')
+display('Initiating testing phase...')
 display('Finding cluster vectors of testing data ...')
 tic
 % test_images_raw_data = reshape(test_data.X, test_image_count, 96, 96, 3);
@@ -276,6 +281,9 @@ for i = 1:test_data_count
     cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
     test_hist = [test_hist; cluster_vector];
 end
+display('test_hist')
+size(test_hist)
+
 toc
 % -> compute histograms for the test data
 display('Predict Scores ...')

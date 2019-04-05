@@ -239,10 +239,10 @@ Y_ships(training_size/5*4+1:training_size/5*5) = ones(1,training_size/5);
 % Creating the training dataset (training_size/5 of each)
 
 X = [
-    svm_train_images_bow_hist_air(1:training_size/5,:),
-    svm_train_images_bow_hist_birds(1:training_size/5,:),
-    svm_train_images_bow_hist_cars(1:training_size/5,:),
-    svm_train_images_bow_hist_horses(1:training_size/5,:),
+    svm_train_images_bow_hist_air(1:training_size/5,:);
+    svm_train_images_bow_hist_birds(1:training_size/5,:);
+    svm_train_images_bow_hist_cars(1:training_size/5,:);
+    svm_train_images_bow_hist_horses(1:training_size/5,:);
     svm_train_images_bow_hist_ships(1:training_size/5,:)];
 
 size(X)
@@ -252,19 +252,19 @@ hImage = imshow(rgb2gray(squeeze(train_images_cl_air(i,:,:,:))), 'Parent', hAxes
 
 
 size(Y_air')
-SVMModel_air = fitcsvm(X,Y_air');%,'KernelFunction','gaussian');
-SVMModel_birds = fitcsvm(X,Y_birds');%,'KernelFunction','gaussian');
-SVMModel_cars = fitcsvm(X,Y_cars');%,'KernelFunction','gaussian');
-SVMModel_horses = fitcsvm(X,Y_horses');%,'KernelFunction','gaussian');
-SVMModel_ships = fitcsvm(X,Y_ships');%,'KernelFunction','gaussian');
+SVMModel_air = fitcsvm(X,Y_air','Cost',[0 4;1 0]);%,'KernelFunction','gaussian');
+SVMModel_birds = fitcsvm(X,Y_birds','Cost',[0 4;1 0]);%,'KernelFunction','gaussian');
+SVMModel_cars = fitcsvm(X,Y_cars','Cost',[0 4;1 0]);%,'KernelFunction','gaussian');
+SVMModel_horses = fitcsvm(X,Y_horses','Cost',[0 4;1 0]);%,'KernelFunction','gaussian');
+SVMModel_ships = fitcsvm(X,Y_ships','Cost',[0 4;1 0]);%,'KernelFunction','gaussian');
 toc
 
-display('Initiating testing phase...\n')
+display('Initiating testing phase...')
 display('Finding cluster vectors of testing data ...')
 tic
 % test_images_raw_data = reshape(test_data.X, test_image_count, 96, 96, 3);
 % test_classes_label = test_data.y;
-test_data_count = 2000;
+test_data_count = 500;
 
 test_data = test_images_raw_data(1:test_data_count,:,:,:);
 test_label = test_class_label(1:test_data_count);
@@ -282,6 +282,7 @@ display('Predict Scores ...')
 tic
 % define our test_data
 newX = test_hist;
+
 
 % score_air etc. are a nx2 array, where the second column are the
 % probabilities of a positive prediction
@@ -353,27 +354,27 @@ mkdir("bow_images/" + image_subfolder);
 imdir = "bow_images/" + image_subfolder + "/";
 for i = 1:5
     top_str = imdir + "air_top_" + i + "_" + sorted_air_score(i) + ".jpg";
-    bot_str = imdir + "air_bot_" + i + "_" + sorted_air_score(end-i+1,2) + ".jpg";
+    bot_str = imdir + "air_bot_" + i + "_" + sorted_air_score(end-i+1) + ".jpg";
     imwrite(rgb2gray(squeeze(data_sorted_air(i,:,:,:))), top_str, 'jpg');
     imwrite(rgb2gray(squeeze(data_sorted_air(end-i+1,:,:,:))), bot_str, 'jpg');
     
     top_str = imdir + "birds_top_" + i + "_" + sorted_birds_score(i) + ".jpg";
-    bot_str = imdir + "birds_bot_" + i + "_" + sorted_birds_score(end-i+1,2) + ".jpg";
+    bot_str = imdir + "birds_bot_" + i + "_" + sorted_birds_score(end-i+1) + ".jpg";
     imwrite(rgb2gray(squeeze(data_sorted_birds(i,:,:,:))), top_str, 'jpg');
     imwrite(rgb2gray(squeeze(data_sorted_birds(end-i+1,:,:,:))), bot_str, 'jpg');
     
-    top_str = imdir + "cars_top_" + i + "_" + sorted_cars_score(i,2) + ".jpg";
-    bot_str = imdir + "cars_bot_" + i + "_" + sorted_cars_score(end-i+1,2) + ".jpg";
+    top_str = imdir + "cars_top_" + i + "_" + sorted_cars_score(i) + ".jpg";
+    bot_str = imdir + "cars_bot_" + i + "_" + sorted_cars_score(end-i+1) + ".jpg";
     imwrite(rgb2gray(squeeze(data_sorted_cars(i,:,:,:))), top_str, 'jpg');
     imwrite(rgb2gray(squeeze(data_sorted_cars(end-i+1,:,:,:))), bot_str, 'jpg');
 
-    top_str = imdir + "horses_top_" + i + "_" + sorted_horses_score(i,2) + ".jpg";
-    bot_str = imdir + "horses_bot_" + i + "_" + sorted_horses_score(end-i+1,2) + ".jpg";
+    top_str = imdir + "horses_top_" + i + "_" + sorted_horses_score(i) + ".jpg";
+    bot_str = imdir + "horses_bot_" + i + "_" + sorted_horses_score(end-i+1) + ".jpg";
     imwrite(rgb2gray(squeeze(data_sorted_horses(i,:,:,:))), top_str, 'jpg');
     imwrite(rgb2gray(squeeze(data_sorted_horses(end-i+1,:,:,:))), bot_str, 'jpg');
 
-    top_str = imdir + "ships_top_" + i + "_" + sorted_ships_score(i,2) + ".jpg";
-    bot_str = imdir + "ships_bot_" + i + "_" + sorted_ships_score(end-i+1,2) + ".jpg";
+    top_str = imdir + "ships_top_" + i + "_" + sorted_ships_score(i) + ".jpg";
+    bot_str = imdir + "ships_bot_" + i + "_" + sorted_ships_score(end-i+1) + ".jpg";
     imwrite(rgb2gray(squeeze(data_sorted_ships(i,:,:,:))), top_str, 'jpg');
     imwrite(rgb2gray(squeeze(data_sorted_ships(end-i+1,:,:,:))), bot_str, 'jpg'); 
 end
