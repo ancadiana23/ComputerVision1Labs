@@ -9,9 +9,9 @@ train_images_raw_data = reshape(train_data.X,train_image_count, 96, 96, 3);
 
 i=2;
 
-[~,descr] = vl_dsift(single(rgb2gray((squeeze(train_images_raw_data(i,:,:,:))))));
+[~,descr1] = vl_sift(single(rgb2gray((squeeze(train_images_raw_data(i,:,:,:))))));
 
-[~,descr2] = vl_phow(single(squeeze(train_images_raw_data(i,:,:,:))),'color','gray');
+[~,descr2] = vl_phow(single(squeeze(train_images_raw_data(i,:,:,:))),'color','gray', 'Step', 8);
 
-descr3 = custom_sift(squeeze(train_images_raw_data(i,:,:,:)),false,'color','rgb');
-
+descr3 = my_sift(squeeze(train_images_raw_data(i,:,:,:)), 'dense', 'rgb');
+descr4 = my_sift(squeeze(train_images_raw_data(i,:,:,:)), 'keypoint', 'rgb');
