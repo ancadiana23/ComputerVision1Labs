@@ -1,37 +1,20 @@
 %% main function 
-
-
 %% fine-tune cnn
-
-[net, info, expdir] = finetune_cnn();
-
-%% extract features and train svm
-
-nets.fine_tuned = load(fullfile(expdir, 'your_new_model.mat')); nets.fine_tuned = nets.fine_tuned.net;
-nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); nets.pre_trained = nets.pre_trained.net; 
-data = load(fullfile(expdir, 'imdb-stl.mat'));
-
 [net, info, expdir] = finetune_cnn();
 
 %% Hyper Parameter Tuning
-
-clear, clc
 expdir = 'data/cnn_assignment-lenet';
 
-res_cell = {};
-ix = 1;
-
-for bs = 50:50:100
-    for ep = 40:40:120
-        nets.fine_tuned = load(fullfile(expdir, strcat('b',num2str(bs),'_e', num2str(ep),'.mat'))); 
-        nets.fine_tuned = nets.fine_tuned.net;
-        nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); 
-        nets.pre_trained = nets.pre_trained.net; 
-        data = load(fullfile(expdir, 'imdb-stl.mat'));
-        res_cell{ix} = train_svm(nets, data);
-        ix = ix+1;
-    end
-end
+%for bs = 50:50:100
+%    for ep = 40:40:120
+%        nets.fine_tuned = load(fullfile(expdir, strcat('b',num2str(bs),'_e', num2str(ep),'.mat'))); 
+%        nets.fine_tuned = nets.fine_tuned.net;
+%        nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); 
+%        nets.pre_trained = nets.pre_trained.net; 
+%        data = load(fullfile(expdir, 'imdb-stl.mat'));
+%        train_svm(nets, data);
+%    end
+%end
 
 %% results (couldnt save them properly)
 %% batch = 50; epoch = 40
@@ -67,6 +50,34 @@ train_svm(nets, data);
 % CNN: fine_tuned_accuracy: 0.79, SVM: pre_trained_accuracy: 69.08, fine_tuned_accuracy: 81.03
 
 %% Data Augmentation
+nets.fine_tuned = load(fullfile(expdir, 'augmentation-80.mat')); 
+nets.fine_tuned = nets.fine_tuned.net;
+nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); 
+nets.pre_trained = nets.pre_trained.net; 
+data = load(fullfile(expdir, 'imdb-stl.mat'));
+train_svm(nets, data);
+% CNN: fine_tuned_accuracy: 0.82, SVM: pre_trained_accuracy: 69.05, fine_tuned_accuracy: 81.03
+
+
+%% More FC layers
+nets.fine_tuned = load(fullfile(expdir, 'more-connected-80.mat')); 
+nets.fine_tuned = nets.fine_tuned.net;
+nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); 
+nets.pre_trained = nets.pre_trained.net; 
+data = load(fullfile(expdir, 'imdb-stl.mat'));
+train_svm(nets, data);
+% CNN: fine_tuned_accuracy: 0.84, SVM: pre_trained_accuracy: 69.05, fine_tuned_accuracy: 83.33
+
+
+%% All Adjustments (Dropouts, More Conv Layers and Augmentation)
+nets.fine_tuned = load(fullfile(expdir, 'all-80.mat')); 
+nets.fine_tuned = nets.fine_tuned.net;
+nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); 
+nets.pre_trained = nets.pre_trained.net; 
+data = load(fullfile(expdir, 'imdb-stl.mat'));
+train_svm(nets, data);
+% CNN: fine_tuned_accuracy: 0.82, SVM: pre_trained_accuracy: 69.05, fine_tuned_accuracy: 81.67
+
 
 
 % Load data
