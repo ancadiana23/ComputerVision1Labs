@@ -7,9 +7,9 @@ train_data = load('stl10_matlab/train.mat');
 [train_image_count, ~] = size(train_data.X);
 
 % Set of global variables
-CLUSTER_COUNT = 400; % 400, 1000, 4000; number of KNN cluster
+CLUSTER_COUNT = 2000; % 400, 1000, 4000; number of KNN cluster
 SIFT_SAMPLING = "dense"; % "keypoint", "dense"
-SIFT_COLOR = "rgb"; % "gray", "rgb", "opponent"
+SIFT_COLOR = "opponent"; % "gray", "rgb", "opponent"
 
 % Data Preprocessing
 display('Data Preprocessing...')
@@ -214,7 +214,7 @@ toc
 %      1.2.1 Take images from other classes we did not use for clustering
 %           (use at least 50 training images per other class -> in sum at least 200)
 %   1.3 Train SVM classifier for this class
-%
+%vl_compilenn
 % To classify image, apply all 5 SVM classifier to it and take the class
 % with the highest probability.
 
@@ -344,7 +344,7 @@ display('Saving the results and images ...')
 tic
 settings_str = "map_results/" + CLUSTER_COUNT +"_"+ SIFT_SAMPLING +"_"+ SIFT_COLOR + ".txt";
 
-fileID = fopen(settings_str, 'w');
+fileID = fopen(settings_str, 'w+');
 fileID
 fprintf(fileID, 'mAP air-class: %.5f\n', mAP_air);
 fprintf(fileID, 'mAP birds-class: %.5f\n', mAP_birds);
