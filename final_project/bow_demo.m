@@ -8,8 +8,8 @@ train_data = load('stl10_matlab/train.mat');
 
 % Set of global variables
 CLUSTER_COUNT = 400; % 400, 1000, 4000; number of KNN cluster
-SIFT_SAMPLING = "keypoint"; % "keypoint", "dense"
-SIFT_COLOR = "gray"; % "gray", "rgb", "opponent"
+SIFT_SAMPLING = "dense"; % "keypoint", "dense"
+SIFT_COLOR = "rgb"; % "gray", "rgb", "opponent"
 
 % Data Preprocessing
 display('Data Preprocessing...')
@@ -83,7 +83,7 @@ train_images_cl_ships = train_images_raw_data(train_class_label==9,:,:,:);
 % There are 2500 train images and 4000 test images in total (500/800 per class)
 % Here we define the number of images for training the clustering (K-means)
 % needs to be multiples of 5 and below 2500
-%test_image_count = 800;
+% test_image_count = 800;
 train_image_count_cluster = 1000;
 
 cluster_train_images = cat(1, ...
@@ -98,8 +98,6 @@ display('Gathering image descriptor data for training K-means...')
 tic
 % Here we save the vl_sift results and concatenate the descriptor data in a
 % matrix, so we can apply k-means on it.
-train_images_sift = {};
-train_images_descr = {};
 cluster_train_descr_matrix = [];
 
 
@@ -172,7 +170,6 @@ svm_train_images_bow_hist_ships = [];
 % used for training the SVMs
 
 training_size = 2500 - train_image_count_cluster;
-train_image_count_cluster
 training_size
 for i = train_image_count_cluster/5+1:2500/5
    descr = my_sift(train_images_cl_air(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
@@ -257,11 +254,11 @@ hImage = imshow(rgb2gray(squeeze(train_images_cl_air(i,:,:,:))), 'Parent', hAxes
 
 
 size(Y_air')
-SVMModel_air = fitcsvm(X,Y_air','Cost',[0 4;1 0], 'ClassNames',[0,1],'KernelFunction','linear');
-SVMModel_birds = fitcsvm(X,Y_birds','Cost',[0 4;1 0], 'ClassNames',[0,1],'KernelFunction','linear');
-SVMModel_cars = fitcsvm(X,Y_cars','Cost',[0 4;1 0], 'ClassNames',[0,1],'KernelFunction','linear');
-SVMModel_horses = fitcsvm(X,Y_horses','Cost',[0 4;1 0], 'ClassNames',[0,1],'KernelFunction','linear');
-SVMModel_ships = fitcsvm(X,Y_ships','Cost',[0 4;1 0], 'ClassNames',[0,1],'KernelFunction','linear');
+SVMModel_air = fitcsvm(X,Y_air','Standardize',true,'Cost',[0 1;4 0], 'ClassNames',[1,0],'KernelFunction','linear');
+SVMModel_birds = fitcsvm(X,Y_birds','Standardize',true,'Cost',[0 1;4 0], 'ClassNames',[1,0],'KernelFunction','linear');
+SVMModel_cars = fitcsvm(X,Y_cars','Standardize',true,'Cost',[0 1;4 0], 'ClassNames',[1,0],'KernelFunction','linear');
+SVMModel_horses = fitcsvm(X,Y_horses','Standardize',true,'Cost',[0 1;4 0], 'ClassNames',[1,0],'KernelFunction','linear');
+SVMModel_ships = fitcsvm(X,Y_ships','Standardize',true,'Cost',[0 1;4 0], 'ClassNames',[1,0],'KernelFunction','linear');
 toc
 
 display('Initiating testing phase...')
