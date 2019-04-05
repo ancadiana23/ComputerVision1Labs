@@ -17,16 +17,18 @@ function [cluster_vector] = find_cluster_vector(C, descr, CLUSTER_COUNT)
 % here we create the cluster histogram
 cluster_vector = zeros(1, CLUSTER_COUNT);
 [descriptor_count, ~] = size(descr');
+[~, idx_test] = pdist2(C,descr','euclidean', 'Smallest', 1);
+
 for j = 1:descriptor_count
-    idx = get_closest_cluster(C, descr(j)');
+    idx = idx_test(j);
+    %idx = get_closest_cluster(C, descr(j)');
     cluster_vector(idx) = cluster_vector(idx) + 1;
-    
 end
 % Normalization of the histogram
 cluster_vector = cluster_vector/descriptor_count;
 end
 
-
+%{
 function [cluster_idx] = get_closest_cluster(C, single_descr)
 
 cluster_idx = 1;
@@ -42,3 +44,4 @@ for j = 2:cluster_count
     
 end
 end
+%}

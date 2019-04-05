@@ -1,5 +1,0 @@
-mAP air-class: 0.22803
-mAP birds-class: 0.28524
-mAP cars-class: 0.17726
-mAP horses-class: 0.17791
-mAP ships-class: 0.18716
