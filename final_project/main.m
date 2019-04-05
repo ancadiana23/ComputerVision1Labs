@@ -5,6 +5,7 @@
 %% Hyper Parameter Tuning
 expdir = 'data/cnn_assignment-lenet';
 
+% couldnt save results properly, therefore saved below
 %for bs = 50:50:100
 %    for ep = 40:40:120
 %        nets.fine_tuned = load(fullfile(expdir, strcat('b',num2str(bs),'_e', num2str(ep),'.mat'))); 
@@ -79,6 +80,7 @@ train_svm(nets, data);
 % CNN: fine_tuned_accuracy: 0.82, SVM: pre_trained_accuracy: 69.05, fine_tuned_accuracy: 81.67
 
 
+%% TSNE
 % Load data
 data = load(fullfile(expdir, 'imdb-stl.mat'));
 
@@ -102,5 +104,3 @@ tsne_fine = tsne(svm.fine_tuned.testset.features, ...
                  2, 6, 50);
 gscatter(tsne_fine(:, 1), tsne_fine(:, 2), data.meta.classes(svm.fine_tuned.testset.labels)');
 savefig('results/tsne_fine.fig')
-
-
