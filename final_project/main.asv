@@ -1,0 +1,74 @@
+%% main function 
+%% fine-tune cnn
+[net, info, expdir] = finetune_cnn();
+
+%% clear workspace
+clear, clc
+%% folder of trained mat objects
+expdir = 'data/cnn_assignment-lenet';
+
+for batchsize = 50:50:100
+    for epoch = 40:40:120
+        nets.fine_tuned = load(fullfile(expdir, strcat('batch_',num2str(batchsize),'-', num2str(epoch),'.mat'))); 
+        nets.fine_tuned = nets.fine_tuned.net;
+        nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); 
+        nets.pre_trained = nets.pre_trained.net; 
+        data = load(fullfile(expdir, 'imdb-stl.mat'));
+        train_svm(nets, data);
+    end
+end
+
+%% results (couldnt save them properly)
+%% batch = 50; epoch = 40
+% CNN: fine_tuned_accuracy: 0.83, SVM: pre_trained_accuracy: 69.08, fine_tuned_accuracy: 83.43
+%% batch = 50; epoch = 80
+% CNN: fine_tuned_accuracy: 0.83, SVM: pre_trained_accuracy: 69.08, fine_tuned_accuracy: 83.43
+%% batch = 50; epoch = 120
+% CNN: fine_tuned_accuracy: 0.83, SVM: pre_trained_accuracy: 69.08, fine_tuned_accuracy: 82.95
+%% batch = 100; epoch = 40
+%CNN: fine_tuned_accuracy: 0.77, SVM: pre_trained_accuracy: 69.08, fine_tuned_accuracy: 76.98
+%% batch = 100; epoch = 80
+% CNN: fine_tuned_accuracy: 0.77, SVM: pre_trained_accuracy: 69.08, fine_tuned_accuracy: 77.40
+%% batch = 100; epoch = 120
+%CNN: fine_tuned_accuracy: 0.77, SVM: pre_trained_accuracy: 69.08, fine_tuned_accuracy: 77.53
+
+%% frozen performance
+% Load networks
+nets.fine_tuned = load(fullfile(expdir, 'frozen-80.mat')); 
+nets.fine_tuned = nets.fine_tuned.net;
+nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); 
+nets.pre_trained = nets.pre_trained.net; 
+data = load(fullfile(expdir, 'imdb-stl.mat'));
+train_svm(nets, data);
+% CNN: fine_tuned_accuracy: 0.60, SVM: pre_trained_accuracy: 69.08, fine_tuned_accuracy: 69.08
+
+%% dropout performance 
+nets.fine_tuned = load(fullfile(expdir, 'dropout-80.mat')); 
+nets.fine_tuned = nets.fine_tuned.net;
+nets.pre_trained = load(fullfile('data', 'pre_trained_model.mat')); 
+nets.pre_trained = nets.pre_trained.net; 
+data = load(fullfile(expdir, 'imdb-stl.mat'));
+train_svm(nets, data);
+
+
+
+% Load data
+data = load(fullfile(expdir, 'imdb-stl.mat'));
+
+% Extract features
+[svm.pre_trained.trainset, svm.pre_trained.testset] = get_svm_data(data, nets.pre_trained);
+[svm.fine_tuned.trainset,  svm.fine_tuned.testset] = get_svm_data(data, nets.fine_tuned);
+
+addpath('tsne')
+
+% Run TSNE
+figure1 = figure('Color',[1 1 1]);
+tsne(vertcat(svm.pre_trained.trainset.features,svm.pre_trained.testset.features),  vertcat(svm.pre_trained.trainset.labels, svm.pre_trained.testset.labels));
+savefig('results/tsne_pre.fig')
+figure2 = figure('Color',[1 1 1]);
+tsne_fine = tsne(vertcat(svm.fine_tuned.trainset.features,svm.fine_tuned.testset.features),  vertcat(svm.fine_tuned.trainset.labels, svm.fine_tuned.testset.labels));
+savefig('results/tsne_fine.fig')
+
+
+
+

@@ -65,12 +65,31 @@ end
 
 end
 
+%% here we can add data augmentation such as rotation, scale ,...
 function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
 images = imdb.images.data(:,:,:,batch) ;
 labels = imdb.images.labels(batch, 1) ;
-if rand > 0.5, images=fliplr(images) ; end
 
+% Flip in left/right direction
+rnumber1 = rand;
+
+if rnumber1 > 0.66
+    images = fliplr(images);
+end    
+% Apply random rotation
+rnumber2 = rand;
+
+if (rnumber2 < 0.66) && (rnumber2 > 0.33)       
+    images = imrotate(images ,(1-rnumber2)*25, 'bilinear', 'crop');
+end    
+
+% rescale between 0.3 and 1 of original image
+rnumber3 = rand;
+if rnumber3 < 0.33 
+    images = imresize(images, 1.1);   
+    images = images(3:34,3:34,:,:);
+end
 end
 
 % -------------------------------------------------------------------------
@@ -148,6 +167,7 @@ for i = 1:length(train.y)
     labels(i) = train.y(i);
     sets(i) = 1;
 end
+
 for i = (length(train.y)+1):(length(train.y)+length(test.y))
     data(:,:,:,i) = imresize(squeeze(test.X(i-length(train.y),:,:,:)), 0.333);
     labels(i) = test.y(i-length(train.y));
