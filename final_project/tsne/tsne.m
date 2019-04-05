@@ -57,7 +57,7 @@ function ydata = tsne(X, labels, no_dims, initial_dims, perplexity)
         else
             C = (1 / size(X, 1)) * (X * X');
         end
-        [M, lambda] = eig(C);
+        [M, lambda] = eigs(C);
         [lambda, ind] = sort(diag(lambda), 'descend');
         M = M(:,ind(1:initial_dims));
         lambda = lambda(1:initial_dims);

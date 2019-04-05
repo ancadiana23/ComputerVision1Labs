@@ -7,6 +7,7 @@ clear, clc
 %% folder of trained mat objects
 expdir = 'data/cnn_assignment-lenet';
 
+
 for batchsize = 50:50:100
     for epoch = 40:40:120
         nets.fine_tuned = load(fullfile(expdir, strcat('batch_',num2str(batchsize),'-', num2str(epoch),'.mat'))); 
@@ -17,6 +18,7 @@ for batchsize = 50:50:100
         train_svm(nets, data);
     end
 end
+
 
 %% results (couldnt save them properly)
 %% batch = 50; epoch = 40
@@ -50,13 +52,18 @@ data = load(fullfile(expdir, 'imdb-stl.mat'));
 addpath('tsne')
 
 % Run TSNE
+
 figure1 = figure('Color',[1 1 1]);
-tsne_pre = tsne(vertcat(svm.pre_trained.trainset.features,svm.pre_trained.testset.features),  vertcat(svm.pre_trained.trainset.labels, svm.pre_trained.testset.labels));
+tsne_pre = tsne(svm.pre_trained.testset.features, ...
+                [], ...
+                2, 6, 50);
+gscatter(tsne_pre(:, 1), tsne_pre(:, 2), data.meta.classes(svm.pre_trained.testset.labels)');
 savefig('results/tsne_pre.fig')
+
 figure2 = figure('Color',[1 1 1]);
-tsne_fine = tsne(vertcat(svm.fine_tuned.trainset.features,svm.fine_tuned.testset.features),  vertcat(svm.fine_tuned.trainset.labels, svm.fine_tuned.testset.labels));
+tsne_fine = tsne(svm.fine_tuned.testset.features, ...
+                 [], ...
+                 2, 6, 50);
+gscatter(tsne_fine(:, 1), tsne_fine(:, 2), data.meta.classes(svm.fine_tuned.testset.labels)');
 savefig('results/tsne_fine.fig')
-
-
-
 
