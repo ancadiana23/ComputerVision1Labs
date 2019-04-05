@@ -72,7 +72,7 @@ net.layers{end+1} = struct('type', 'conv', ...
 net.layers{end+1} = struct('type', 'relu') ;
 
 %% Dropout for Bonus section 
-net.layers{end+1} = struct('type', 'dropout') ;
+% net.layers{end+1} = struct('type', 'dropout') ;
 
 %% TODO: Define the structure here, so that the network outputs 5-class
 %% rather than 10 (as in the pretrained network)
@@ -83,6 +83,7 @@ NEW_INPUT_SIZE  = 64;
 % 5, as there are 5 classes for our subset 
 NEW_OUTPUT_SIZE = 5;
 
+%% more FC layers is the current setting 
 net.layers{end+1} = struct('type', 'conv', ...
                            'weights', {{0.05*randn(1,1,NEW_INPUT_SIZE,32, 'single'),...
                            zeros(1,32,'single')}}, ...
