@@ -1,3 +1,5 @@
+
+display('Loading data ...')
 test_data = load('stl10_matlab/test.mat');
 train_data = load('stl10_matlab/train.mat');
 
@@ -6,15 +8,12 @@ train_data = load('stl10_matlab/train.mat');
 
 % Set of global variables
 CLUSTER_COUNT = 400; % 400, 1000, 4000; number of KNN cluster
-SIFT_SAMPLING = "keypoints"; % "keypoints", "dense"
+SIFT_SAMPLING = "dense"; % "keypoint", "dense"
 SIFT_COLOR = "gray"; % "gray", "rgb", "opponent"
 
-% ignore this
-use_test = false;
-
 % Data Preprocessing
-
-
+display('Data Preprocessing...')
+tic
 % reshape and store the 8000 test_images in a (8000, 96, 96, 3) sized
 % vector
 test_images_raw_data = reshape(test_data.X, test_image_count, 96, 96, 3);
@@ -85,7 +84,7 @@ train_images_cl_ships = train_images_raw_data(train_class_label==9,:,:,:);
 % Here we define the number of images for training the clustering (K-means)
 % needs to be multiples of 5 and below 2500
 %test_image_count = 800;
-train_image_count_cluster = 500;
+train_image_count_cluster = 1000;
 
 cluster_train_images = cat(1, ...
     train_images_cl_air(1:train_image_count_cluster/5,:,:,:), ...
@@ -93,7 +92,9 @@ cluster_train_images = cat(1, ...
     train_images_cl_cars(1:train_image_count_cluster/5,:,:,:), ...
     train_images_cl_horses(1:train_image_count_cluster/5,:,:,:), ...
     train_images_cl_ships(1:train_image_count_cluster/5,:,:,:));
+toc
 
+display('Gathering image descriptor data for training K-means...')
 tic
 % Here we save the vl_sift results and concatenate the descriptor data in a
 % matrix, so we can apply k-means on it.
@@ -103,7 +104,7 @@ cluster_train_descr_matrix = [];
 
 
 for i = 1:train_image_count_cluster
-   [train_images_sift{i}, train_images_descr{i}] = my_sift(cluster_train_images(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR)));
+   train_images_descr{i} = my_sift(cluster_train_images(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
    cluster_train_descr_matrix = [cluster_train_descr_matrix; train_images_descr{i}'];
 end
 toc
@@ -115,6 +116,7 @@ toc
 
 % C is then a CLUSTER_COUNTx128 matrix, where the rows are the cluster
 % centres
+display('Training Kmeans...')
 tic
 [~, C] = kmeans(double(cluster_train_descr_matrix), CLUSTER_COUNT); 
 toc 
@@ -140,6 +142,7 @@ toc
 % 1. extract descriptors 
 % 2. assign word to each descriptor
 
+display('Assigning cluster to the training data...')
 tic
 
 svm_train_images_bow_hist_air = [];
@@ -163,24 +166,27 @@ svm_train_images_bow_hist_ships = [];
 
 % Here we create the words for the different class-images. These will be
 % used for training the SVMs
-for i = train_image_count_cluster/5+1:train_image_count_cluster/5+100
-   [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_air(i,:,:,:))))));
+
+training_size = 2500 - train_image_count_cluster;
+
+for i = train_image_count_cluster/5+1:2500/5
+   descr = my_sift(train_images_cl_air(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
    svm_train_images_bow_hist_air = cat(1,svm_train_images_bow_hist_air,cluster_vector);
    
-   [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_birds(i,:,:,:))))));
+   descr = my_sift(train_images_cl_birds(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
    svm_train_images_bow_hist_birds = cat(1,svm_train_images_bow_hist_birds,cluster_vector);
    
-   [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_cars(i,:,:,:))))));
+   descr = my_sift(train_images_cl_cars(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
    svm_train_images_bow_hist_cars = cat(1,svm_train_images_bow_hist_cars,cluster_vector);
    
-   [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_horses(i,:,:,:))))));
+   descr = my_sift(train_images_cl_horses(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
    svm_train_images_bow_hist_horses = cat(1,svm_train_images_bow_hist_horses,cluster_vector);
    
-   [~, descr] = vl_sift(single(rgb2gray((squeeze(train_images_cl_ships(i,:,:,:))))));
+   descr = my_sift(train_images_cl_ships(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
    cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
    svm_train_images_bow_hist_ships = cat(1,svm_train_images_bow_hist_ships,cluster_vector);
    
@@ -211,7 +217,8 @@ toc
 % with the highest probability.
 
 % current data size for testing = 250 for every svm training (50 per class, we use the same ones here)
-training_size = 250;
+display('Training all 5 SVMModels...')
+tic
 
 % Creating training labels
 Y_air = zeros(1,training_size);
@@ -224,7 +231,7 @@ Y_cars = zeros(1,training_size);
 Y_cars(training_size/5*2+1:training_size/5*3) = ones(1,training_size/5);
 
 Y_horses = zeros(1,training_size);
-Y_cars(training_size/5*3+1:training_size/5*4) = ones(1,training_size/5);
+Y_horses(training_size/5*3+1:training_size/5*4) = ones(1,training_size/5);
 
 Y_ships = zeros(1,training_size);
 Y_ships(training_size/5*4+1:training_size/5*5) = ones(1,training_size/5);
@@ -250,10 +257,14 @@ SVMModel_birds = fitcsvm(X,Y_birds');%,'KernelFunction','gaussian');
 SVMModel_cars = fitcsvm(X,Y_cars');%,'KernelFunction','gaussian');
 SVMModel_horses = fitcsvm(X,Y_horses');%,'KernelFunction','gaussian');
 SVMModel_ships = fitcsvm(X,Y_ships');%,'KernelFunction','gaussian');
+toc
 
+display('Initiating testing phase...\n')
+display('Finding cluster vectors of testing data ...')
+tic
 % test_images_raw_data = reshape(test_data.X, test_image_count, 96, 96, 3);
 % test_classes_label = test_data.y;
-test_data_count = 40;
+test_data_count = 2000;
 
 test_data = test_images_raw_data(1:test_data_count,:,:,:);
 test_label = test_class_label(1:test_data_count);
@@ -261,12 +272,14 @@ test_label = test_class_label(1:test_data_count);
 % we will apply the SVM classifier.
 test_hist = [];
 for i = 1:test_data_count
-   [~, descr] = vl_sift(single(rgb2gray((squeeze(test_data(i,:,:,:))))));
+    descr = my_sift(test_data(i,:,:,:), SIFT_SAMPLING, SIFT_COLOR);
     cluster_vector = find_cluster_vector(C, descr, CLUSTER_COUNT);
     test_hist = [test_hist; cluster_vector];
 end
+toc
 % -> compute histograms for the test data
-
+display('Predict Scores ...')
+tic
 % define our test_data
 newX = test_hist;
 
@@ -277,18 +290,100 @@ newX = test_hist;
 [~ , score_cars] = predict(SVMModel_cars,newX);
 [~ , score_horses] = predict(SVMModel_horses,newX);
 [~ , score_ships] = predict(SVMModel_ships,newX);
+toc
+%score_air
+%[air_sort, air_order] = sort(score_air(:,2));
+%air_sort
+%test_label_sorted = test_label(air_order,:);
+%test_data_sorted = test_data(air_order,:,:,:);
 
-score_air
-[air_sort, air_order] = sort(score_air(:,2));
-air_sort
-test_label_sorted = test_label(air_order,:)
-test_data_sorted = test_data(air_order,:,:,:);
+display('Sort scores, label data and image data and computing mAP...')
+tic
+size(score_air)
+[sorted_air_score, air_order] = sort(score_air(:,2));
+data_sorted_air = test_data(air_order,:,:,:);
+label_sorted_air = test_label(air_order,:);
+label_sorted_air = label_sorted_air == 1;
+mAP_air = get_map(label_sorted_air);
 
+size(score_birds)
+[sorted_birds_score, birds_order] = sort(score_birds(:,2));
+data_sorted_birds = test_data(birds_order,:,:,:);
+label_sorted_birds = test_label(birds_order,:);
+label_sorted_birds = label_sorted_birds == 2;
+mAP_birds = get_map(label_sorted_birds);
+
+size(score_cars)
+[sorted_cars_score, cars_order] = sort(score_cars(:,2));
+data_sorted_cars = test_data(cars_order,:,:,:);
+label_sorted_cars = test_label(cars_order,:);
+label_sorted_cars = label_sorted_cars == 3;
+mAP_cars = get_map(label_sorted_cars);
+
+size(score_horses)
+[sorted_horses_score, horses_order] = sort(score_horses(:,2));
+data_sorted_horses = test_data(horses_order,:,:,:);
+label_sorted_horses = test_label(horses_order,:);
+label_sorted_horses = label_sorted_horses == 7;
+mAP_horses = get_map(label_sorted_horses);
+
+size(score_ships)
+[sorted_ships_score, ships_order] = sort(score_ships(:,2));
+data_sorted_ships = test_data(ships_order,:,:,:);
+label_sorted_ships = test_label(ships_order,:);
+label_sorted_ships = label_sorted_ships == 9;
+mAP_ships = get_map(label_sorted_ships);
+toc
+display('Saving the results and images ...')
+tic
+settings_str = "map_results/" + CLUSTER_COUNT +"_"+ SIFT_SAMPLING +"_"+ SIFT_COLOR + ".txt";
+
+fileID = fopen(settings_str, 'w');
+fileID
+fprintf(fileID, 'mAP air-class: %.5f\n', mAP_air);
+fprintf(fileID, 'mAP birds-class: %.5f\n', mAP_birds);
+fprintf(fileID, 'mAP cars-class: %.5f\n', mAP_cars);
+fprintf(fileID, 'mAP horses-class: %.5f\n', mAP_horses);
+fprintf(fileID, 'mAP ships-class: %.5f\n', mAP_ships);
+
+fclose(fileID);
+
+image_subfolder = CLUSTER_COUNT +"_"+ SIFT_SAMPLING +"_"+ SIFT_COLOR;
+mkdir("bow_images/" + image_subfolder);
+imdir = "bow_images/" + image_subfolder + "/";
+for i = 1:5
+    top_str = imdir + "air_top_" + i + "_" + sorted_air_score(i) + ".jpg";
+    bot_str = imdir + "air_bot_" + i + "_" + sorted_air_score(end-i+1,2) + ".jpg";
+    imwrite(rgb2gray(squeeze(data_sorted_air(i,:,:,:))), top_str, 'jpg');
+    imwrite(rgb2gray(squeeze(data_sorted_air(end-i+1,:,:,:))), bot_str, 'jpg');
+    
+    top_str = imdir + "birds_top_" + i + "_" + sorted_birds_score(i) + ".jpg";
+    bot_str = imdir + "birds_bot_" + i + "_" + sorted_birds_score(end-i+1,2) + ".jpg";
+    imwrite(rgb2gray(squeeze(data_sorted_birds(i,:,:,:))), top_str, 'jpg');
+    imwrite(rgb2gray(squeeze(data_sorted_birds(end-i+1,:,:,:))), bot_str, 'jpg');
+    
+    top_str = imdir + "cars_top_" + i + "_" + sorted_cars_score(i,2) + ".jpg";
+    bot_str = imdir + "cars_bot_" + i + "_" + sorted_cars_score(end-i+1,2) + ".jpg";
+    imwrite(rgb2gray(squeeze(data_sorted_cars(i,:,:,:))), top_str, 'jpg');
+    imwrite(rgb2gray(squeeze(data_sorted_cars(end-i+1,:,:,:))), bot_str, 'jpg');
+
+    top_str = imdir + "horses_top_" + i + "_" + sorted_horses_score(i,2) + ".jpg";
+    bot_str = imdir + "horses_bot_" + i + "_" + sorted_horses_score(end-i+1,2) + ".jpg";
+    imwrite(rgb2gray(squeeze(data_sorted_horses(i,:,:,:))), top_str, 'jpg');
+    imwrite(rgb2gray(squeeze(data_sorted_horses(end-i+1,:,:,:))), bot_str, 'jpg');
+
+    top_str = imdir + "ships_top_" + i + "_" + sorted_ships_score(i,2) + ".jpg";
+    bot_str = imdir + "ships_bot_" + i + "_" + sorted_ships_score(end-i+1,2) + ".jpg";
+    imwrite(rgb2gray(squeeze(data_sorted_ships(i,:,:,:))), top_str, 'jpg');
+    imwrite(rgb2gray(squeeze(data_sorted_ships(end-i+1,:,:,:))), bot_str, 'jpg'); 
+end
+toc
+%{
 for i=1:5
     hAxes = axes( figure ); % I usually use figure; hAxes = gca; here, but this is even more explicit.
     hImage = imshow(rgb2gray(squeeze(test_data_sorted(i,:,:,:))), 'Parent', hAxes);
 end
-
+%}
 
 
 % for sorting: [A_sort, A_order] = sort(A) -> B(A_order,:) is B sorted by
@@ -301,5 +396,17 @@ end
 % Maybe even create a custom_sift_function, with one additional parameter,
 % that decides on the type of sift function. This parameter can then be set
 % at the start of the demo.
+
+% 1. create get_map function , done
+
+% 2. understand how the results should be processed:
+% create a list of results for each binary classifier 
+% (one for airplanes, one for birds , one for cars, ...) of score-values
+% sort by that score-value
+
+% 3. write method to save first 5 and last 5 images  in subfolder
+
+% 4. save the results of mAP, according to the classes, in a file, where
+% its name indicates the settings
 
 
