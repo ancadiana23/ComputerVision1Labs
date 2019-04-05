@@ -28,6 +28,10 @@ if variant == "dense"
 elseif variant == "keypoint"
     if sift_mode == "gray"
         [~, descr] = vl_sift(single(rgb2gray(squeeze(image))));
+    % 
+    % Für Benjamin: Die folgenden zwei methoden fehlen noch.
+    % 
+    
     elseif sift_mode == "rgb"
         % [~, descr]
         % maybe reshaping necessary
